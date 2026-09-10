@@ -1,14 +1,10 @@
 const Show = require('../models/Show');
 const Booking = require('../models/Booking');
 
-// Helper to generate unique booking code
+// Helper to generate unique booking code in BookMyShow style (e.g. BMS-HYD-98421)
 const generateBookingCode = () => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = 'TKT-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
+  const num = Math.floor(100000 + Math.random() * 900000);
+  return `BMS-HYD-${num}`;
 };
 
 // @desc    Lock selected seats temporarily (7 minutes) to prevent concurrent bookings
@@ -40,7 +36,7 @@ const lockSeats = async (req, res) => {
         return res.status(400).json({ message: `Seat ${seatId} does not exist in this screen layout` });
       }
       if (seat.status === 'booked') {
-        return res.status(409).json({ message: `Seat ${seatId} has already been booked` });
+        return res.status(409).json({ message: `Seat ${seatId} has already been booked by another user.` });
       }
       if (seat.status === 'locked' && seat.lockedBy && seat.lockedBy.toString() !== userId.toString() && seat.lockedAt > sevenMinutesAgo) {
         return res.status(409).json({ message: `Seat ${seatId} is currently reserved by another customer. Try again shortly.` });
@@ -72,7 +68,7 @@ const lockSeats = async (req, res) => {
 // @route   POST /api/bookings/confirm
 const confirmBooking = async (req, res) => {
   try {
-    const { showId, seatIds, paymentMethod } = req.body;
+    const { showId, seatIds, paymentMethod, snacks = [], upiId } = req.body;
     const userId = req.user._id;
 
     if (!showId || !seatIds || !seatIds.length) {
@@ -87,7 +83,7 @@ const confirmBooking = async (req, res) => {
     show.releaseExpiredLocks();
 
     // Validate that all seats are either locked by this user or available
-    let totalAmount = 0;
+    let ticketAmount = 0;
     const sevenMinutesAgo = new Date(Date.now() - 7 * 60 * 1000);
 
     for (const seatId of seatIds) {
@@ -102,9 +98,9 @@ const confirmBooking = async (req, res) => {
         return res.status(409).json({ message: `Lock on seat ${seatId} expired or held by another user` });
       }
 
-      // Calculate price
-      const price = seat.seatType === 'premium' ? show.ticketPrice.premium : show.ticketPrice.standard;
-      totalAmount += price;
+      // Calculate price based on seat tier
+      const price = show.ticketPrice[seat.seatType] || show.ticketPrice.standard || 200;
+      ticketAmount += price;
     }
 
     // Mark seats as permanently booked
@@ -117,17 +113,30 @@ const confirmBooking = async (req, res) => {
 
     await show.save();
 
+    // Calculate snacks amount
+    const snacksAmount = snacks.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    // BookMyShow standard convenience fee: ₹15 per ticket + 18% GST
+    const convenienceFee = Number((seatIds.length * 15.00).toFixed(2));
+    const gst = Number((convenienceFee * 0.18).toFixed(2));
+    const totalAmount = Number((ticketAmount + snacksAmount + convenienceFee + gst).toFixed(2));
+
     // Create booking record
     const booking = await Booking.create({
       user: userId,
       show: showId,
       seats: seatIds,
+      snacks,
+      ticketAmount,
+      convenienceFee,
+      gst,
       totalAmount,
       bookingCode: generateBookingCode(),
       paymentDetails: {
         method: paymentMethod || 'UPI',
         status: 'PAID',
-        transactionId: `TXN${Date.now()}${Math.floor(Math.random() * 1000)}`
+        transactionId: `TXN${Date.now()}${Math.floor(100 + Math.random() * 900)}`,
+        upiId: upiId || 'customer@upi'
       }
     });
 
@@ -135,7 +144,7 @@ const confirmBooking = async (req, res) => {
       .populate({
         path: 'show',
         populate: [
-          { path: 'movie', select: 'title posterUrl duration language' },
+          { path: 'movie', select: 'title posterUrl duration language genre rating' },
           { path: 'theatre', select: 'name city address' }
         ]
       });
@@ -154,7 +163,7 @@ const getMyBookings = async (req, res) => {
       .populate({
         path: 'show',
         populate: [
-          { path: 'movie', select: 'title posterUrl duration language genre' },
+          { path: 'movie', select: 'title posterUrl duration language genre rating' },
           { path: 'theatre', select: 'name city address' }
         ]
       })

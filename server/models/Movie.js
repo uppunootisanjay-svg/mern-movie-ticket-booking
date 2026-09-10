@@ -29,11 +29,22 @@ const movieSchema = new mongoose.Schema({
   },
   posterUrl: {
     type: String,
-    default: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800'
+    required: true
+  },
+  trailerUrl: {
+    type: String,
+    default: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  bannerUrl: {
+    type: String
   },
   rating: {
     type: Number,
     default: 8.5
+  },
+  votes: {
+    type: String,
+    default: '120K+'
   },
   isActive: {
     type: Boolean,

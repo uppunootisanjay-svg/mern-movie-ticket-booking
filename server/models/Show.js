@@ -6,7 +6,7 @@ const seatSchema = new mongoose.Schema({
   col: { type: Number, required: true },
   seatType: {
     type: String,
-    enum: ['standard', 'premium'],
+    enum: ['classic', 'standard', 'premium', 'recliner'],
     default: 'standard'
   },
   status: {
@@ -35,14 +35,25 @@ const showSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  format: {
+    type: String,
+    enum: ['2D', '3D', 'IMAX 2D', 'IMAX 3D', '4DX', 'ICE'],
+    default: '2D'
+  },
+  language: {
+    type: String,
+    default: 'Telugu'
+  },
   showDateTime: {
     type: Date,
     required: true,
     index: true
   },
   ticketPrice: {
-    standard: { type: Number, default: 150 },
-    premium: { type: Number, default: 250 }
+    classic: { type: Number, default: 150 },
+    standard: { type: Number, default: 220 },
+    premium: { type: Number, default: 320 },
+    recliner: { type: Number, default: 450 }
   },
   seats: [seatSchema]
 }, { timestamps: true });

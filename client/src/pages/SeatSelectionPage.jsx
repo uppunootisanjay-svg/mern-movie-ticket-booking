@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import SeatGrid from '../components/SeatGrid';
-import { Clock, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Clock, ShieldCheck, AlertCircle, Sparkles } from 'lucide-react';
 
 const SeatSelectionPage = () => {
   const { showId } = useParams();
@@ -23,7 +23,7 @@ const SeatSelectionPage = () => {
         const data = await apiClient(`/shows/${showId}`);
         setShow(data);
       } catch (err) {
-        setError('Failed to fetch seat map');
+        setError('Failed to fetch seat layout');
       } finally {
         setLoading(false);
       }
@@ -38,7 +38,7 @@ const SeatSelectionPage = () => {
       setSelectedSeats(selectedSeats.filter(id => id !== seatId));
     } else {
       if (selectedSeats.length >= 8) {
-        setError('You can select a maximum of 8 seats per booking');
+        setError('You can select a maximum of 8 seats per transaction');
         return;
       }
       setSelectedSeats([...selectedSeats, seatId]);
@@ -49,7 +49,7 @@ const SeatSelectionPage = () => {
     if (!show) return 0;
     return selectedSeats.reduce((sum, seatId) => {
       const seat = show.seats.find(s => s.seatId === seatId);
-      const price = seat?.seatType === 'premium' ? show.ticketPrice.premium : show.ticketPrice.standard;
+      const price = show.ticketPrice?.[seat?.seatType] || show.ticketPrice?.standard || 250;
       return sum + price;
     }, 0);
   };
@@ -61,7 +61,7 @@ const SeatSelectionPage = () => {
     }
 
     if (selectedSeats.length === 0) {
-      setError('Please select at least one seat to proceed');
+      setError('Please select your seats before proceeding');
       return;
     }
 
@@ -69,7 +69,7 @@ const SeatSelectionPage = () => {
       setSubmitting(true);
       setError(null);
 
-      // Lock seats on the server to prevent race conditions
+      // Lock seats on the server to prevent race conditions (atomic lock)
       await apiClient('/bookings/lock', {
         method: 'POST',
         body: {
@@ -78,7 +78,7 @@ const SeatSelectionPage = () => {
         }
       });
 
-      // Proceed to checkout summary
+      // Proceed to snacks and checkout summary
       navigate('/booking/summary', {
         state: {
           show,
@@ -87,8 +87,7 @@ const SeatSelectionPage = () => {
         }
       });
     } catch (err) {
-      setError(err.message || 'Seat lock failed. Some seats may have just been booked by another customer.');
-      // Refresh seat status
+      setError(err.message || 'Seat lock failed. Selected seats may have just been reserved.');
       const refreshed = await apiClient(`/shows/${showId}`);
       setShow(refreshed);
     } finally {
@@ -97,31 +96,35 @@ const SeatSelectionPage = () => {
   };
 
   if (loading) {
-    return <div className="container" style={{ padding: '4rem 0', textAlign: 'center' }}>Loading interactive seat grid...</div>;
+    return <div className="container" style={{ padding: '4rem 0', textAlign: 'center' }}>Loading interactive auditorium grid...</div>;
   }
 
   if (!show) {
     return <div className="container" style={{ padding: '4rem 0' }}><div className="alert alert-danger">Show details not found.</div></div>;
   }
 
-  const showTime = new Date(show.showDateTime).toLocaleDateString([], {
+  const showTime = new Date(show.showDateTime).toLocaleDateString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
 
   return (
-    <div className="container" style={{ padding: '2rem 1.5rem 4rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="container" style={{ padding: '2rem 1.5rem 5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '800' }}>{show.movie?.title}</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800' }}>{show.movie?.title}</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-            {show.theatre?.name} • Screen {show.screenNumber} • {showTime}
+            <strong style={{ color: 'var(--text-main)' }}>{show.theatre?.name}</strong> • Screen {show.screenNumber} • {show.format || '2D'} • {showTime}
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', background: 'var(--bg-card)', padding: '0.6rem 1.2rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Standard: <strong style={{ color: 'var(--text-main)' }}>₹{show.ticketPrice.standard}</strong></span>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', background: 'var(--bg-card)', padding: '0.6rem 1.25rem', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
+          <span style={{ fontSize: '0.85rem' }}>Classic: <strong>₹{show.ticketPrice?.classic || 175}</strong></span>
           <span style={{ color: 'var(--border)' }}>|</span>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Premium: <strong style={{ color: 'var(--text-main)' }}>₹{show.ticketPrice.premium}</strong></span>
+          <span style={{ fontSize: '0.85rem' }}>Prime: <strong>₹{show.ticketPrice?.standard || 250}</strong></span>
+          <span style={{ color: 'var(--border)' }}>|</span>
+          <span style={{ fontSize: '0.85rem' }}>Premium: <strong>₹{show.ticketPrice?.premium || 350}</strong></span>
+          <span style={{ color: 'var(--border)' }}>|</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--accent)' }}>Recliner: <strong>₹{show.ticketPrice?.recliner || 450}</strong></span>
         </div>
       </div>
 
@@ -131,35 +134,38 @@ const SeatSelectionPage = () => {
         </div>
       )}
 
-      <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+      {/* Auditorium Seating Matrix with Aisles */}
+      <div style={{ background: 'var(--bg-card)', padding: '2rem 1.5rem', borderRadius: '1rem', border: '1px solid var(--border)', marginBottom: '3rem' }}>
         <SeatGrid
           seats={show.seats}
           selectedSeats={selectedSeats}
           onToggleSeat={handleToggleSeat}
+          ticketPrice={show.ticketPrice}
         />
       </div>
 
-      {/* Floating Checkout Bottom Bar */}
+      {/* Floating Bottom Bar */}
       <div style={{
         position: 'sticky',
         bottom: '1rem',
-        background: 'rgba(19, 27, 46, 0.95)',
-        backdropFilter: 'blur(10px)',
+        background: 'rgba(17, 23, 38, 0.95)',
+        backdropFilter: 'blur(12px)',
         padding: '1.25rem 2rem',
-        borderRadius: '0.75rem',
+        borderRadius: '1rem',
         border: '1px solid var(--border)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: '1rem',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+        gap: '1.25rem',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.6)',
+        zIndex: 40
       }}>
         <div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Selected Seats: <strong style={{ color: 'var(--text-main)' }}>{selectedSeats.length ? selectedSeats.join(', ') : 'None'}</strong>
+            Selected Seats: <strong style={{ color: 'var(--text-main)', fontSize: '1rem' }}>{selectedSeats.length ? selectedSeats.join(', ') : 'None'}</strong>
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginTop: '2px' }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', marginTop: '2px' }}>
             Total: ₹{calculateTotal()}
           </div>
         </div>
@@ -168,9 +174,9 @@ const SeatSelectionPage = () => {
           onClick={handleProceed}
           disabled={selectedSeats.length === 0 || submitting}
           className="btn btn-primary"
-          style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+          style={{ padding: '0.85rem 2.25rem', fontSize: '1.05rem' }}
         >
-          {submitting ? 'Holding Seats...' : `Pay & Book (${selectedSeats.length} Seats)`}
+          {submitting ? 'Holding Seats...' : `Proceed to Pay (₹${calculateTotal()})`}
         </button>
       </div>
     </div>
