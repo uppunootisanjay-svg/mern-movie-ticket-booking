@@ -6,7 +6,8 @@
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
-    "seed": "cd server && npm run seed"
+    "seed": "cd server && npm run seed",
+    "users": "cd server && npm run users"
   },
   "keywords": ["mern", "movie-booking", "react", "nodejs", "mongodb", "express"],
   "author": "Sanjay Uppunooti",
