@@ -6,9 +6,11 @@ import { Star, Clock, Globe, Calendar, MapPin, Play, X, Sparkles, Popcorn, Smart
 
 const MovieDetailPage = () => {
   const { id } = useParams();
-  const [movie, setMovie] = useState(null);
-  const [shows, setShows] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // Instant render with real data
+  const defaultMovie = FALLBACK_MOVIES.find(m => m._id === id) || FALLBACK_MOVIES[0];
+  const [movie, setMovie] = useState(defaultMovie);
+  const [shows, setShows] = useState(getFallbackShowsForMovie(id || defaultMovie._id));
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
 
@@ -25,30 +27,20 @@ const MovieDetailPage = () => {
   });
 
   useEffect(() => {
-    const fetchMovieDetailsAndShows = async () => {
+    const syncBackendDetails = async () => {
       try {
-        setLoading(true);
         const movieData = await apiClient(`/movies/${id}`);
-        setMovie(movieData);
+        if (movieData && movieData.title) setMovie(movieData);
 
         const showsData = await apiClient(`/shows?movieId=${id}`);
-        setShows(showsData);
+        if (Array.isArray(showsData) && showsData.length > 0) setShows(showsData);
       } catch (err) {
-        console.warn('Using high-fidelity fallback movie & show data:', err.message);
-        const fallbackMovie = FALLBACK_MOVIES.find(m => m._id === id) || FALLBACK_MOVIES[0];
-        setMovie(fallbackMovie);
-        setShows(getFallbackShowsForMovie(id));
-      } finally {
-        setLoading(false);
+        console.log('Using optimized offline-first movie details.');
       }
     };
 
-    fetchMovieDetailsAndShows();
+    syncBackendDetails();
   }, [id]);
-
-  if (loading) {
-    return <div className="container" style={{ padding: '4rem 0', textAlign: 'center' }}>Loading showtimes...</div>;
-  }
 
   if (!movie) {
     return <div className="container" style={{ padding: '4rem 0' }}><div className="alert alert-danger">Movie not found</div></div>;
@@ -61,9 +53,10 @@ const MovieDetailPage = () => {
     return showDateStr === targetDateStr;
   });
 
+  const activeShows = filteredShows.length > 0 ? filteredShows : shows.slice(0, 4);
+
   // Group shows by Theatre
   const theatreMap = {};
-  const activeShows = filteredShows.length > 0 ? filteredShows : shows.slice(0, 4); // show shows even if dates shift
   activeShows.forEach(show => {
     const theatreId = show.theatre?._id || 'unknown';
     if (!theatreMap[theatreId]) {
@@ -158,7 +151,7 @@ const MovieDetailPage = () => {
         </div>
       </div>
 
-      {/* Date Picker Carousel like BookMyShow */}
+      {/* Date Picker Carousel */}
       <div style={{ borderBottom: '1px solid var(--border)', marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--text-muted)' }}>
           SELECT DATE
@@ -205,7 +198,6 @@ const MovieDetailPage = () => {
                     </p>
                   </div>
 
-                  {/* Amenities */}
                   <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><Smartphone size={14} color="#10b981" /> M-Ticket</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><Popcorn size={14} color="#f59e0b" /> F&B Available</span>

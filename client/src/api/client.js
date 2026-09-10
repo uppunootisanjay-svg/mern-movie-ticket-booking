@@ -1,7 +1,4 @@
 // Determine API base URL:
-// 1. If VITE_API_BASE_URL is set, use it.
-// 2. If running on production (Vercel / domain other than localhost), default directly to your deployed Render backend.
-// 3. If running locally on localhost/127.0.0.1, use '/api' to leverage Vite's local proxy.
 const getBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   if (envUrl) {
@@ -31,15 +28,22 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
     headers['Authorization'] = `Bearer ${storedToken}`;
   }
 
+  // 4-second timeout prevents browser hanging when Render free tier is sleeping
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+
   let response;
   try {
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
   } catch (netErr) {
-    throw new Error('Cannot connect to backend. Render free tier may be waking up (takes ~30s on first request).');
+    clearTimeout(timeoutId);
+    throw new Error('Backend server is offline or sleeping');
   }
 
   let data;
@@ -47,7 +51,7 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
   if (contentType && contentType.includes('application/json')) {
     data = await response.json();
   } else {
-    throw new Error('Backend server is starting up or returned an error.');
+    throw new Error('Non-JSON response from backend');
   }
 
   if (!response.ok) {
