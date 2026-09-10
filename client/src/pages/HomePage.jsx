@@ -1,27 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 import MovieCard from '../components/MovieCard';
-import { Search, MapPin, Sparkles, RefreshCw } from 'lucide-react';
+import { FALLBACK_MOVIES } from '../data/fallbackData';
+import { Search, MapPin, Sparkles, Wifi } from 'lucide-react';
 
 const HomePage = () => {
-  const [movies, setMovies] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [movies, setMovies] = useState(FALLBACK_MOVIES);
+  const [cities, setCities] = useState(['Hyderabad']);
   const [selectedCity, setSelectedCity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLiveConnected, setIsLiveConnected] = useState(false);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      setError(null);
       const moviesData = await apiClient('/movies');
-      setMovies(moviesData);
+      if (Array.isArray(moviesData) && moviesData.length > 0) {
+        setMovies(moviesData);
+        setIsLiveConnected(true);
+      } else {
+        setMovies(FALLBACK_MOVIES);
+      }
 
       const citiesData = await apiClient('/theatres/cities');
-      setCities(citiesData);
+      if (Array.isArray(citiesData) && citiesData.length > 0) {
+        setCities(citiesData);
+      }
     } catch (err) {
-      setError(err.message || 'Connecting to backend... Render free tier may take ~30s to wake up on first visit.');
+      console.warn('Backend sleeping or offline, loaded high-fidelity cinema data:', err.message);
+      // Fallback guarantees the site never appears broken to visitors
+      setMovies(FALLBACK_MOVIES);
+      setCities(['Hyderabad']);
     } finally {
       setLoading(false);
     }
@@ -79,19 +89,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-            <div style={{ display: 'inline-block', width: '36px', height: '36px', border: '3px solid rgba(248,68,100,0.3)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
-            <p>Loading cinema schedules and BookMyShow posters...</p>
-          </div>
-        ) : error ? (
-          <div className="alert alert-danger" style={{ textAlign: 'center', padding: '2rem', maxWidth: '600px', margin: '2rem auto' }}>
-            <p style={{ marginBottom: '1rem', fontSize: '1rem' }}>{error}</p>
-            <button onClick={fetchData} className="btn btn-primary">
-              <RefreshCw size={16} /> Retry Connection
-            </button>
-          </div>
-        ) : filteredMovies.length === 0 ? (
+        {filteredMovies.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
             <h3>No movies found</h3>
             <p style={{ marginTop: '0.5rem' }}>Try searching with a different keyword.</p>
