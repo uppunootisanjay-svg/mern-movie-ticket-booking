@@ -1,9 +1,22 @@
-// Use VITE_API_BASE_URL if set in environment (e.g. Render backend URL on Vercel), else fallback to '/api'
+// Determine API base URL:
+// 1. If VITE_API_BASE_URL is set, use it.
+// 2. If running on production (Vercel / domain other than localhost), default directly to your deployed Render backend.
+// 3. If running locally on localhost/127.0.0.1, use '/api' to leverage Vite's local proxy.
 const getBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (!envUrl) return '/api';
-  const clean = envUrl.replace(/\/+$/, '');
-  return clean.endsWith('/api') ? clean : `${clean}/api`;
+  if (envUrl) {
+    const clean = envUrl.replace(/\/+$/, '');
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return 'https://mern-movie-ticket-booking-1.onrender.com/api';
+    }
+  }
+
+  return '/api';
 };
 
 const API_BASE_URL = getBaseUrl();
@@ -26,7 +39,7 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch (netErr) {
-    throw new Error('Cannot connect to the backend server. Please make sure the backend is running.');
+    throw new Error('Cannot connect to backend. Render free tier may be waking up (takes ~30s on first request).');
   }
 
   let data;
@@ -34,7 +47,7 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
   if (contentType && contentType.includes('application/json')) {
     data = await response.json();
   } else {
-    throw new Error('The backend server is offline or returned an error.');
+    throw new Error('Backend server is starting up or returned an error.');
   }
 
   if (!response.ok) {
