@@ -9,10 +9,10 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/movie_booking_db');
-    console.log('MongoDB Connected for Seeding...');
+    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/movie_booking_db');
+    console.log(`MongoDB Connected for Seeding: ${conn.connection.host}`);
   } catch (err) {
-    console.error(err);
+    console.error(`DB Connection Error: ${err.message}`);
     process.exit(1);
   }
 };
@@ -40,13 +40,13 @@ const seedData = async () => {
   try {
     await connectDB();
 
-    // Clear existing data
+    // Reset collections
     await User.deleteMany();
     await Movie.deleteMany();
     await Theatre.deleteMany();
     await Show.deleteMany();
 
-    console.log('Cleared existing collections...');
+    console.log('Cleared existing database records...');
 
     // 1. Seed Users
     const admin = await User.create({
@@ -63,103 +63,134 @@ const seedData = async () => {
       role: 'user'
     });
 
-    console.log('Seeded Users: Admin and Demo User created.');
+    console.log('✓ Users created: demo@cinepass.com / password123');
 
-    // 2. Seed Movies
+    // 2. Seed Real BookMyShow Running Movies with Exact Official CDN Posters
     const movies = await Movie.insertMany([
       {
-        title: 'Interstellar',
-        description: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity survival.',
-        genre: ['Sci-Fi', 'Adventure', 'Drama'],
-        language: 'English',
-        duration: 169,
-        releaseDate: new Date('2024-11-07'),
-        posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
-        rating: 8.7
-      },
-      {
-        title: 'Inception',
-        description: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea.',
-        genre: ['Action', 'Sci-Fi', 'Thriller'],
-        language: 'English',
-        duration: 148,
-        releaseDate: new Date('2024-07-16'),
-        posterUrl: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=800',
-        rating: 8.8
+        title: 'Pushpa 2: The Rule',
+        description: 'Pushpa Raj expands his red sandalwood empire into international waters while facing off against SP Bhanwar Singh Shekhawat in an explosive showdown.',
+        genre: ['Action', 'Thriller', 'Drama'],
+        language: 'Telugu / Hindi',
+        duration: 200,
+        releaseDate: new Date('2024-12-05'),
+        posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/pushpa-2-the-rule-et00421959-1737184834.jpg',
+        rating: 8.5
       },
       {
         title: 'Kalki 2898 AD',
-        description: 'A modern-day avatar of Vishnu, a Hindu god, who is believed to have descended to the earth to protect the world from evil forces.',
+        description: 'Set in a dystopian post-apocalyptic future in Kasi, a bounty hunter named Bhairava and Ashwatthama clash over the unborn child who will become the Kalki avatar.',
         genre: ['Action', 'Sci-Fi', 'Mythology'],
         language: 'Telugu / Hindi',
         duration: 181,
         releaseDate: new Date('2024-06-27'),
-        posterUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800',
-        rating: 8.2
+        posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/kalki-2898-ad-et00402192-1718885399.jpg',
+        rating: 8.4
       },
       {
-        title: 'The Dark Knight',
-        description: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest tests.',
+        title: 'Stree 2: Sarkate Ka Aatank',
+        description: 'The peaceful town of Chanderi faces a terrifying new headless evil spirit known as Sarkata, who abducts women. Vicky and his gang reunite with Stree to defeat him.',
+        genre: ['Comedy', 'Horror'],
+        language: 'Hindi',
+        duration: 147,
+        releaseDate: new Date('2024-08-15'),
+        posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/stree-2-et00364249-1721725490.jpg',
+        rating: 8.6
+      },
+      {
+        title: 'Mirzapur: The Movie',
+        description: 'The intense, power-hungry war for control of the underworld and the throne of Purvanchal explodes onto the big screen with Kaleen Bhaiya and Guddu Pandit.',
         genre: ['Action', 'Crime', 'Drama'],
-        language: 'English',
-        duration: 152,
-        releaseDate: new Date('2024-07-18'),
-        posterUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800',
-        rating: 9.0
+        language: 'Hindi',
+        duration: 155,
+        releaseDate: new Date('2025-01-10'),
+        posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00417686-slhjzpafpd-portrait.jpg',
+        rating: 8.8
+      },
+      {
+        title: 'Hanu-Man',
+        description: 'A young man in the village of Anjanadri accidentally discovers an ancient solar gem that grants him the divine powers of Lord Hanuman to defend his people.',
+        genre: ['Action', 'Adventure', 'Fantasy'],
+        language: 'Telugu',
+        duration: 158,
+        releaseDate: new Date('2024-01-12'),
+        posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00515338-hfermmaflw-portrait.jpg',
+        rating: 8.7
+      },
+      {
+        title: 'Sardar 2',
+        description: 'Agent Chandra Bose returns for another globe-trotting espionage mission to uncover an international bio-chemical conspiracy targeting critical water reserves.',
+        genre: ['Action', 'Spy', 'Thriller'],
+        language: 'Telugu / Tamil',
+        duration: 162,
+        releaseDate: new Date('2025-03-20'),
+        posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00502829-mctejadlra-portrait.jpg',
+        rating: 8.3
       }
     ]);
 
-    console.log(`Seeded ${movies.length} Movies.`);
+    console.log(`✓ Seeded ${movies.length} Real BookMyShow Movies with exact posters.`);
 
-    // 3. Seed Theatres
+    // 3. Seed Real BookMyShow Hyderabad Theatres
     const theatres = await Theatre.insertMany([
       {
-        name: 'PVR Cinemas: Forum Mall',
+        name: 'AMB Cinemas: Gachibowli',
         city: 'Hyderabad',
-        address: 'Kukatpally Housing Board Colony, Hyderabad, Telangana',
+        address: 'Sarath City Capital Mall, Gachibowli - Miyapur Road, Hyderabad, Telangana',
         screens: [
-          { screenNumber: 1, name: 'Audi 1 (IMAX)', rows: 6, cols: 8 },
-          { screenNumber: 2, name: 'Audi 2 (4DX)', rows: 6, cols: 8 }
+          { screenNumber: 1, name: 'Screen 1 (Laser 4K)', rows: 6, cols: 8 },
+          { screenNumber: 2, name: 'Screen 2 (Dolby Atmos)', rows: 6, cols: 8 }
         ]
       },
       {
-        name: 'INOX: GVK One Mall',
+        name: 'Prasads Multiplex: Necklace Road',
         city: 'Hyderabad',
-        address: 'Banjara Hills, Hyderabad, Telangana',
+        address: 'NTR Gardens, Khairatabad, Hyderabad, Telangana',
         screens: [
-          { screenNumber: 1, name: 'Screen 1', rows: 6, cols: 8 }
+          { screenNumber: 1, name: 'Large Screen (IMAX Experience)', rows: 6, cols: 8 }
         ]
       },
       {
-        name: 'Cinepolis: Orion Mall',
-        city: 'Bengaluru',
-        address: 'Rajajinagar, Bengaluru, Karnataka',
+        name: 'PVR: Atrium Mall, Gachibowli',
+        city: 'Hyderabad',
+        address: 'Survey No 136, 4th Floor, Atrium Mall, Gachibowli, Hyderabad, Telangana',
         screens: [
-          { screenNumber: 1, name: 'Audi 1 (Dolby Atmos)', rows: 6, cols: 8 }
+          { screenNumber: 1, name: 'PVR P[XL] Audi 1', rows: 6, cols: 8 }
+        ]
+      },
+      {
+        name: 'Asian Radhika Multiplex: ECIL',
+        city: 'Hyderabad',
+        address: 'Dr. AS Rao Nagar Road, ECIL, Kapra, Secunderabad, Telangana',
+        screens: [
+          { screenNumber: 1, name: 'Screen 1 (Dolby 7.1)', rows: 6, cols: 8 }
         ]
       }
     ]);
 
-    console.log(`Seeded ${theatres.length} Theatres.`);
+    console.log(`✓ Seeded ${theatres.length} Hyderabad Theatres.`);
 
-    // 4. Seed Shows for today and tomorrow
+    // 4. Generate Live Shows for Today and Tomorrow across theatres
     const showsToInsert = [];
-    const today = new Date();
-    today.setHours(11, 30, 0, 0);
+    const morning = new Date();
+    morning.setHours(11, 15, 0, 0);
+
+    const matinee = new Date();
+    matinee.setHours(14, 30, 0, 0);
 
     const evening = new Date();
     evening.setHours(18, 45, 0, 0);
 
     const night = new Date();
-    night.setHours(21, 30, 0, 0);
+    night.setHours(21, 45, 0, 0);
 
-    // Shows for Interstellar
+    // Pushpa 2 at AMB Cinemas and Prasads
     showsToInsert.push({
       movie: movies[0]._id,
       theatre: theatres[0]._id,
       screenNumber: 1,
-      showDateTime: today,
-      ticketPrice: { standard: 180, premium: 280 },
+      showDateTime: morning,
+      ticketPrice: { standard: 250, premium: 350 },
       seats: generateSeats(6, 8)
     });
 
@@ -167,49 +198,96 @@ const seedData = async () => {
       movie: movies[0]._id,
       theatre: theatres[0]._id,
       screenNumber: 1,
-      showDateTime: night,
-      ticketPrice: { standard: 200, premium: 320 },
-      seats: generateSeats(6, 8)
-    });
-
-    // Shows for Inception
-    showsToInsert.push({
-      movie: movies[1]._id,
-      theatre: theatres[0]._id,
-      screenNumber: 2,
       showDateTime: evening,
-      ticketPrice: { standard: 160, premium: 260 },
+      ticketPrice: { standard: 295, premium: 395 },
       seats: generateSeats(6, 8)
     });
 
-    // Shows for Kalki 2898 AD
     showsToInsert.push({
-      movie: movies[2]._id,
+      movie: movies[0]._id,
       theatre: theatres[1]._id,
       screenNumber: 1,
+      showDateTime: night,
+      ticketPrice: { standard: 250, premium: 350 },
+      seats: generateSeats(6, 8)
+    });
+
+    // Kalki 2898 AD at Prasads and PVR
+    showsToInsert.push({
+      movie: movies[1]._id,
+      theatre: theatres[1]._id,
+      screenNumber: 1,
+      showDateTime: matinee,
+      ticketPrice: { standard: 250, premium: 350 },
+      seats: generateSeats(6, 8)
+    });
+
+    showsToInsert.push({
+      movie: movies[1]._id,
+      theatre: theatres[2]._id,
+      screenNumber: 1,
       showDateTime: evening,
+      ticketPrice: { standard: 220, premium: 320 },
+      seats: generateSeats(6, 8)
+    });
+
+    // Stree 2 at PVR and Asian Radhika
+    showsToInsert.push({
+      movie: movies[2]._id,
+      theatre: theatres[2]._id,
+      screenNumber: 1,
+      showDateTime: night,
       ticketPrice: { standard: 200, premium: 300 },
       seats: generateSeats(6, 8)
     });
 
     showsToInsert.push({
-      movie: movies[3]._id,
-      theatre: theatres[2]._id,
+      movie: movies[2]._id,
+      theatre: theatres[3]._id,
       screenNumber: 1,
+      showDateTime: evening,
+      ticketPrice: { standard: 175, premium: 250 },
+      seats: generateSeats(6, 8)
+    });
+
+    // Mirzapur: The Movie at AMB Cinemas
+    showsToInsert.push({
+      movie: movies[3]._id,
+      theatre: theatres[0]._id,
+      screenNumber: 2,
       showDateTime: night,
-      ticketPrice: { standard: 190, premium: 290 },
+      ticketPrice: { standard: 295, premium: 395 },
+      seats: generateSeats(6, 8)
+    });
+
+    // Hanu-Man at Asian Radhika
+    showsToInsert.push({
+      movie: movies[4]._id,
+      theatre: theatres[3]._id,
+      screenNumber: 1,
+      showDateTime: matinee,
+      ticketPrice: { standard: 150, premium: 200 },
+      seats: generateSeats(6, 8)
+    });
+
+    // Sardar 2 at AMB Cinemas
+    showsToInsert.push({
+      movie: movies[5]._id,
+      theatre: theatres[0]._id,
+      screenNumber: 2,
+      showDateTime: evening,
+      ticketPrice: { standard: 250, premium: 350 },
       seats: generateSeats(6, 8)
     });
 
     await Show.insertMany(showsToInsert);
-    console.log(`Seeded ${showsToInsert.length} Show Schedules.`);
+    console.log(`✓ Seeded ${showsToInsert.length} Show Schedules.`);
 
-    console.log('-------------------------------------------');
-    console.log('Seed Completed Successfully!');
-    console.log('Login credentials:');
-    console.log('User: demo@cinepass.com / password123');
-    console.log('Admin: admin@cinepass.com / password123');
-    console.log('-------------------------------------------');
+    console.log('---------------------------------------------------------');
+    console.log('BookMyShow Cinema Data Loaded Successfully!');
+    console.log('Sample User Login: demo@cinepass.com / password123');
+    console.log('Admin User Login:  admin@cinepass.com / password123');
+    console.log('---------------------------------------------------------');
 
     process.exit(0);
   } catch (err) {

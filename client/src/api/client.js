@@ -10,16 +10,27 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
     headers['Authorization'] = `Bearer ${storedToken}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (netErr) {
+    throw new Error('Cannot connect to the backend server. Please make sure the server and database are running.');
+  }
 
-  const data = await response.json();
+  let data;
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    data = await response.json();
+  } else {
+    throw new Error('The backend server is offline or returned an error.');
+  }
 
   if (!response.ok) {
-    throw new Error(data.message || 'Something went wrong');
+    throw new Error(data?.message || 'Request failed');
   }
 
   return data;
