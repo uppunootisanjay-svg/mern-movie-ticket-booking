@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 import MovieCard from '../components/MovieCard';
-import { Search, MapPin, Sparkles } from 'lucide-react';
+import { Search, MapPin, Sparkles, RefreshCw } from 'lucide-react';
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -11,22 +11,23 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const moviesData = await apiClient('/movies');
+      setMovies(moviesData);
+
+      const citiesData = await apiClient('/theatres/cities');
+      setCities(citiesData);
+    } catch (err) {
+      setError(err.message || 'Connecting to backend... Render free tier may take ~30s to wake up on first visit.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const moviesData = await apiClient('/movies');
-        setMovies(moviesData);
-
-        const citiesData = await apiClient('/theatres/cities');
-        setCities(citiesData);
-      } catch (err) {
-        setError('Failed to load movies. Make sure your backend server is running.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -40,7 +41,7 @@ const HomePage = () => {
     <div>
       <section className="hero">
         <div className="container">
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(229, 9, 20, 0.12)', color: 'var(--primary)', padding: '0.4rem 0.9rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: '700', marginBottom: '1rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(248, 68, 100, 0.15)', color: 'var(--primary)', padding: '0.4rem 0.9rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: '700', marginBottom: '1rem' }}>
             <Sparkles size={16} /> Instant Cinema Booking Platform
           </div>
           <h1>Experience Movies Like Never Before</h1>
@@ -80,11 +81,15 @@ const HomePage = () => {
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-            <p>Loading cinema schedules...</p>
+            <div style={{ display: 'inline-block', width: '36px', height: '36px', border: '3px solid rgba(248,68,100,0.3)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1rem' }} />
+            <p>Loading cinema schedules and BookMyShow posters...</p>
           </div>
         ) : error ? (
-          <div className="alert alert-danger" style={{ textAlign: 'center' }}>
-            {error}
+          <div className="alert alert-danger" style={{ textAlign: 'center', padding: '2rem', maxWidth: '600px', margin: '2rem auto' }}>
+            <p style={{ marginBottom: '1rem', fontSize: '1rem' }}>{error}</p>
+            <button onClick={fetchData} className="btn btn-primary">
+              <RefreshCw size={16} /> Retry Connection
+            </button>
           </div>
         ) : filteredMovies.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>

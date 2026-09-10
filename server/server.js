@@ -18,16 +18,20 @@ connectDB();
 
 const app = express();
 
-// Middleware: Enable CORS for localhost and deployed frontend (Vercel)
+// Middleware: Enable CORS for all environments
 app.use(cors({
   origin: true,
   credentials: true
 }));
 app.use(express.json());
 
-// API Base Routes
+// API Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'API is healthy and running', timestamp: new Date() });
+  res.json({
+    status: 'API is healthy and running',
+    environment: process.env.NODE_ENV || 'production',
+    timestamp: new Date()
+  });
 });
 
 app.use('/api/auth', authRoutes);
@@ -42,6 +46,6 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running in ${process.env.NODE_ENV || 'production'} mode on port ${PORT}`);
 });
