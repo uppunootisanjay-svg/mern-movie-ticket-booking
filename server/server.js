@@ -18,9 +18,9 @@ connectDB();
 
 const app = express();
 
-// Middleware
+// Middleware: Enable CORS for localhost and deployed frontend (Vercel)
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: true,
   credentials: true
 }));
 app.use(express.json());

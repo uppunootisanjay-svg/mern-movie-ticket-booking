@@ -1,4 +1,12 @@
-const API_BASE_URL = '/api';
+// Use VITE_API_BASE_URL if set in environment (e.g. Render backend URL on Vercel), else fallback to '/api'
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl) return '/api';
+  const clean = envUrl.replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
+const API_BASE_URL = getBaseUrl();
 
 export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) => {
   const headers = {
@@ -18,7 +26,7 @@ export const apiClient = async (endpoint, { method = 'GET', body, token } = {}) 
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch (netErr) {
-    throw new Error('Cannot connect to the backend server. Please make sure the server and database are running.');
+    throw new Error('Cannot connect to the backend server. Please make sure the backend is running.');
   }
 
   let data;
