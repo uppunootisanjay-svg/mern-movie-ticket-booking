@@ -1,5 +1,4 @@
-// High-fidelity fallback data matching BookMyShow Hyderabad real cinema data
-// Ensures the app works smoothly on Vercel even when Render free tier is sleeping (cold start)
+// Complete active cinema schedule matching BookMyShow Hyderabad running titles
 
 export const FALLBACK_MOVIES = [
   {
@@ -17,6 +16,19 @@ export const FALLBACK_MOVIES = [
   },
   {
     _id: 'm2',
+    title: 'Devara: Part 1',
+    description: 'A fearless chieftain of the coastal lands fights to protect his people from illicit arms smugglers and personal betrayal across the stormy Red Sea.',
+    genre: ['Action', 'Drama', 'Thriller'],
+    language: 'Telugu / Hindi',
+    duration: 177,
+    releaseDate: '2024-09-27',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00506432-unrywylcuz-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 8.4,
+    votes: '330K+'
+  },
+  {
+    _id: 'm3',
     title: 'Kalki 2898 AD',
     description: 'Set in a dystopian post-apocalyptic future in Kasi, a bounty hunter named Bhairava and Ashwatthama clash over the unborn child who will become the Kalki avatar.',
     genre: ['Action', 'Sci-Fi', 'Mythology'],
@@ -29,7 +41,7 @@ export const FALLBACK_MOVIES = [
     votes: '350K+'
   },
   {
-    _id: 'm3',
+    _id: 'm4',
     title: 'Stree 2: Sarkate Ka Aatank',
     description: 'The peaceful town of Chanderi faces a terrifying new headless evil spirit known as Sarkata, who abducts women. Vicky and his gang reunite with Stree to defeat him.',
     genre: ['Comedy', 'Horror'],
@@ -42,7 +54,20 @@ export const FALLBACK_MOVIES = [
     votes: '290K+'
   },
   {
-    _id: 'm4',
+    _id: 'm5',
+    title: 'Sardar 2',
+    description: 'Agent Chandra Bose returns for another globe-trotting espionage mission to uncover an international bio-chemical conspiracy targeting critical water reserves.',
+    genre: ['Action', 'Spy', 'Thriller'],
+    language: 'Telugu / Tamil',
+    duration: 162,
+    releaseDate: '2025-03-20',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00502829-mctejadlra-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/tQ02g3A2uHw',
+    rating: 8.3,
+    votes: '110K+'
+  },
+  {
+    _id: 'm6',
     title: 'Mirzapur: The Movie',
     description: 'The intense, power-hungry war for control of the underworld and the throne of Purvanchal explodes onto the big screen with Kaleen Bhaiya and Guddu Pandit.',
     genre: ['Action', 'Crime', 'Drama'],
@@ -55,30 +80,56 @@ export const FALLBACK_MOVIES = [
     votes: '190K+'
   },
   {
-    _id: 'm5',
-    title: 'Hanu-Man',
-    description: 'A young man in the village of Anjanadri accidentally discovers an ancient solar gem that grants him the divine powers of Lord Hanuman to defend his people.',
-    genre: ['Action', 'Adventure', 'Fantasy'],
+    _id: 'm7',
+    title: 'Mahendragiri Vaaraahi',
+    description: 'A suspenseful ancient archaeological expedition uncovers mythological secrets guarding the divine temple of Mahendragiri against modern thieves.',
+    genre: ['Mystery', 'Mythology', 'Thriller'],
     language: 'Telugu',
-    duration: 158,
-    releaseDate: '2024-01-12',
-    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00515338-hfermmaflw-portrait.jpg',
-    trailerUrl: 'https://www.youtube.com/embed/dfnP5d_v_oQ',
-    rating: 8.7,
-    votes: '220K+'
+    duration: 142,
+    releaseDate: '2026-09-04',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00508816-dmgkqanrha-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 8.2,
+    votes: '65K+'
   },
   {
-    _id: 'm6',
-    title: 'Sardar 2',
-    description: 'Agent Chandra Bose returns for another globe-trotting espionage mission to uncover an international bio-chemical conspiracy targeting critical water reserves.',
-    genre: ['Action', 'Spy', 'Thriller'],
-    language: 'Telugu / Tamil',
-    duration: 162,
-    releaseDate: '2025-03-20',
-    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00502829-mctejadlra-portrait.jpg',
-    trailerUrl: 'https://www.youtube.com/embed/tQ02g3A2uHw',
-    rating: 8.3,
-    votes: '110K+'
+    _id: 'm8',
+    title: 'Mandaadi',
+    description: 'An emotional and action-packed rural drama revolving around traditional valor, kinship ties, and an intense inter-generational local rivalry.',
+    genre: ['Drama', 'Action'],
+    language: 'Telugu',
+    duration: 138,
+    releaseDate: '2026-09-08',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00515338-hfermmaflw-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dfnP5d_v_oQ',
+    rating: 8.1,
+    votes: '42K+'
+  },
+  {
+    _id: 'm9',
+    title: 'Fall 2: Deadpoint',
+    description: 'Two adrenaline-seeking climbers find themselves stranded thousands of feet above sea level with failing ropes and harsh mountain storms.',
+    genre: ['Adventure', 'Thriller', 'Survival'],
+    language: 'English',
+    duration: 110,
+    releaseDate: '2026-09-01',
+    posterUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 7.9,
+    votes: '88K+'
+  },
+  {
+    _id: 'm10',
+    title: 'Haiwaan',
+    description: 'A tense psychological cat-and-mouse game between an unorthodox detective and a calculating criminal mastermind who leaves intricate clues.',
+    genre: ['Action', 'Thriller'],
+    language: 'Hindi',
+    duration: 135,
+    releaseDate: '2026-09-05',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC/et00493836-svelcnneeq-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 8.0,
+    votes: '54K+'
   }
 ];
 
@@ -134,7 +185,7 @@ export const getFallbackShowsForMovie = (movieId) => {
       theatre: FALLBACK_THEATRES[0],
       screenNumber: 1,
       format: 'IMAX 2D',
-      language: 'Telugu',
+      language: movie.language.split('/')[0].trim(),
       showDateTime: m.toISOString(),
       ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
       seats: generateFallbackSeats()
@@ -146,7 +197,7 @@ export const getFallbackShowsForMovie = (movieId) => {
       theatre: FALLBACK_THEATRES[1],
       screenNumber: 1,
       format: '2D',
-      language: 'Telugu',
+      language: movie.language.split('/')[0].trim(),
       showDateTime: e.toISOString(),
       ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
       seats: generateFallbackSeats()
@@ -158,7 +209,7 @@ export const getFallbackShowsForMovie = (movieId) => {
       theatre: FALLBACK_THEATRES[2],
       screenNumber: 2,
       format: 'Laser 4K',
-      language: 'Hindi',
+      language: movie.language.split('/')[0].trim(),
       showDateTime: n.toISOString(),
       ticketPrice: { classic: 160, standard: 220, premium: 320, recliner: 420 },
       seats: generateFallbackSeats()
