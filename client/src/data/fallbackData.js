@@ -1,4 +1,24 @@
-// Complete active cinema schedule matching BookMyShow Hyderabad running titles
+// Complete BookMyShow India Cities, Theatres, Movies & Food Data
+
+export const ALL_CITIES = [
+  'All Cities',
+  'Hyderabad',
+  'Bengaluru',
+  'Mumbai',
+  'Delhi-NCR',
+  'Chennai',
+  'Pune',
+  'Kolkata',
+  'Ahmedabad',
+  'Chandigarh',
+  'Kochi',
+  'Visakhapatnam',
+  'Vijayawada',
+  'Warangal',
+  'Nizamabad',
+  'Karimnagar',
+  'Godavarikhani'
+];
 
 export const FALLBACK_MOVIES = [
   {
@@ -12,7 +32,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/pushpa-2-the-rule-et00421959-1737184834.jpg',
     trailerUrl: 'https://www.youtube.com/embed/gPn_UuW8pB8',
     rating: 8.9,
-    votes: '480K+'
+    votes: '480K+',
+    cities: ['Hyderabad', 'Bengaluru', 'Mumbai', 'Delhi-NCR', 'Chennai', 'Visakhapatnam', 'Warangal', 'Godavarikhani']
   },
   {
     _id: 'm2',
@@ -22,10 +43,11 @@ export const FALLBACK_MOVIES = [
     language: 'Telugu / Hindi',
     duration: 177,
     releaseDate: '2024-09-27',
-    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00506432-unrywylcuz-portrait.jpg',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008:l-image,i-discovery-catalog@@icons@@pt-v1.png,t-false,lfo-top_right,lx-N0,ly-0,w-200,l-end/et00506432-unrywylcuz-portrait.jpg',
     trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     rating: 8.4,
-    votes: '330K+'
+    votes: '330K+',
+    cities: ['Hyderabad', 'Bengaluru', 'Visakhapatnam', 'Vijayawada', 'Warangal', 'Karimnagar']
   },
   {
     _id: 'm3',
@@ -38,7 +60,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/kalki-2898-ad-et00402192-1718885399.jpg',
     trailerUrl: 'https://www.youtube.com/embed/kQDd1AhGIHk',
     rating: 8.5,
-    votes: '350K+'
+    votes: '350K+',
+    cities: ['Hyderabad', 'Bengaluru', 'Mumbai', 'Delhi-NCR', 'Chennai', 'Pune']
   },
   {
     _id: 'm4',
@@ -51,7 +74,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/stree-2-et00364249-1721725490.jpg',
     trailerUrl: 'https://www.youtube.com/embed/KVnheRhhLog',
     rating: 8.6,
-    votes: '290K+'
+    votes: '290K+',
+    cities: ['Hyderabad', 'Mumbai', 'Delhi-NCR', 'Bengaluru', 'Pune', 'Ahmedabad', 'Chandigarh']
   },
   {
     _id: 'm5',
@@ -64,7 +88,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00502829-mctejadlra-portrait.jpg',
     trailerUrl: 'https://www.youtube.com/embed/tQ02g3A2uHw',
     rating: 8.3,
-    votes: '110K+'
+    votes: '110K+',
+    cities: ['Hyderabad', 'Chennai', 'Bengaluru', 'Visakhapatnam', 'Vijayawada']
   },
   {
     _id: 'm6',
@@ -77,7 +102,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00417686-slhjzpafpd-portrait.jpg',
     trailerUrl: 'https://www.youtube.com/embed/ZNeGMk_CW94',
     rating: 8.8,
-    votes: '190K+'
+    votes: '190K+',
+    cities: ['Hyderabad', 'Mumbai', 'Delhi-NCR', 'Pune', 'Kolkata', 'Chandigarh']
   },
   {
     _id: 'm7',
@@ -90,7 +116,8 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00508816-dmgkqanrha-portrait.jpg',
     trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     rating: 8.2,
-    votes: '65K+'
+    votes: '65K+',
+    cities: ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Visakhapatnam']
   },
   {
     _id: 'm8',
@@ -103,10 +130,39 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00515338-hfermmaflw-portrait.jpg',
     trailerUrl: 'https://www.youtube.com/embed/dfnP5d_v_oQ',
     rating: 8.1,
-    votes: '42K+'
+    votes: '42K+',
+    cities: ['Hyderabad', 'Warangal', 'Godavarikhani', 'Karimnagar', 'Vijayawada']
   },
   {
     _id: 'm9',
+    title: 'Epic',
+    description: 'A high-octane period action adventure that follows an ancient rebellion against tyranny across the rugged Deccan plateau.',
+    genre: ['Action', 'Adventure', 'Period'],
+    language: 'Telugu',
+    duration: 150,
+    releaseDate: '2026-09-10',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00513649-xtvvxfgagv-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 8.0,
+    votes: '38K+',
+    cities: ['Hyderabad', 'Bengaluru', 'Visakhapatnam', 'Warangal']
+  },
+  {
+    _id: 'm10',
+    title: 'Haiwaan',
+    description: 'A tense psychological cat-and-mouse game between an unorthodox detective and a calculating criminal mastermind who leaves intricate clues.',
+    genre: ['Action', 'Psychological Thriller'],
+    language: 'Hindi',
+    duration: 135,
+    releaseDate: '2026-09-05',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC/et00493836-svelcnneeq-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    rating: 8.0,
+    votes: '54K+',
+    cities: ['Hyderabad', 'Mumbai', 'Delhi-NCR', 'Kolkata', 'Pune']
+  },
+  {
+    _id: 'm11',
     title: 'Fall 2: Deadpoint',
     description: 'Two adrenaline-seeking climbers find themselves stranded thousands of feet above sea level with failing ropes and harsh mountain storms.',
     genre: ['Adventure', 'Thriller', 'Survival'],
@@ -116,20 +172,82 @@ export const FALLBACK_MOVIES = [
     posterUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800',
     trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     rating: 7.9,
-    votes: '88K+'
+    votes: '88K+',
+    cities: ['Hyderabad', 'Bengaluru', 'Mumbai', 'Delhi-NCR', 'Chennai']
   },
   {
-    _id: 'm10',
-    title: 'Haiwaan',
-    description: 'A tense psychological cat-and-mouse game between an unorthodox detective and a calculating criminal mastermind who leaves intricate clues.',
-    genre: ['Action', 'Thriller'],
-    language: 'Hindi',
-    duration: 135,
-    releaseDate: '2026-09-05',
-    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC/et00493836-svelcnneeq-portrait.jpg',
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    rating: 8.0,
-    votes: '54K+'
+    _id: 'm12',
+    title: 'Hanu-Man',
+    description: 'A young man in the village of Anjanadri accidentally discovers an ancient solar gem that grants him the divine powers of Lord Hanuman to defend his people.',
+    genre: ['Action', 'Adventure', 'Fantasy'],
+    language: 'Telugu / Hindi',
+    duration: 158,
+    releaseDate: '2024-01-12',
+    posterUrl: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC,e-usm-2-2-0.5-0.008/et00505015-yfyexxggck-portrait.jpg',
+    trailerUrl: 'https://www.youtube.com/embed/dfnP5d_v_oQ',
+    rating: 8.7,
+    votes: '220K+',
+    cities: ['Hyderabad', 'Warangal', 'Visakhapatnam', 'Karimnagar', 'Godavarikhani', 'Mumbai']
+  }
+];
+
+// Rich Food & Beverage menu with real high-res photography posters
+export const SNACKS_MENU = [
+  {
+    id: 'f1',
+    name: 'Jumbo Butter Popcorn Tub',
+    price: 190,
+    category: 'Popcorn',
+    desc: 'Freshly popped warm gourmet popcorn layered with rich melted dairy butter.',
+    posterUrl: 'https://images.unsplash.com/photo-1572177191856-3cde618dee1f?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f2',
+    name: 'Golden Caramel Gourmet Popcorn',
+    price: 230,
+    category: 'Popcorn',
+    desc: 'Crisp mushroom-kernel popcorn coated with artisanal brown sugar caramel glaze.',
+    posterUrl: 'https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f3',
+    name: 'Loaded Mexican Cheese Nachos',
+    price: 180,
+    category: 'Snacks',
+    desc: 'Crispy stone-ground corn tortilla chips served with piping hot jalapeño cheese sauce & salsa.',
+    posterUrl: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f4',
+    name: 'Blockbuster Combo (Large Popcorn + 2 Drinks)',
+    price: 340,
+    category: 'Combos',
+    desc: 'Best value! 1 Large Salted Butter Popcorn Tub + 2 Chilled Fountain Coca-Cola (500ml).',
+    posterUrl: 'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f5',
+    name: 'Crispy Paneer / Chicken Burger',
+    price: 195,
+    category: 'Hot Meals',
+    desc: 'Crisp spiced patty nestled in toasted sesame brioche with fresh lettuce & spicy chipotle mayo.',
+    posterUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f6',
+    name: 'Chilled Fountain Coca-Cola (500ml)',
+    price: 90,
+    category: 'Beverages',
+    desc: 'Refreshing ice-cold carbonated beverage served with lemon twist and crushed ice.',
+    posterUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'f7',
+    name: 'Crunchy French Fries Basket',
+    price: 130,
+    category: 'Snacks',
+    desc: 'Deep-fried golden potato fries dusted with peri-peri seasoned sea salt and dipping mayo.',
+    posterUrl: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?w=600&auto=format&fit=crop&q=80'
   }
 ];
 
@@ -137,7 +255,17 @@ export const FALLBACK_THEATRES = [
   { _id: 't1', name: 'AMB Cinemas: Gachibowli', city: 'Hyderabad', address: 'Sarath City Capital Mall, Gachibowli - Miyapur Road, Hyderabad' },
   { _id: 't2', name: 'Prasads Multiplex: Necklace Road', city: 'Hyderabad', address: 'NTR Gardens, Khairatabad, Hyderabad' },
   { _id: 't3', name: 'PVR: Atrium Mall, Gachibowli', city: 'Hyderabad', address: '4th Floor, Atrium Mall, Gachibowli, Hyderabad' },
-  { _id: 't4', name: 'Asian Radhika Multiplex: ECIL', city: 'Hyderabad', address: 'Dr. AS Rao Nagar Road, ECIL, Kapra, Hyderabad' }
+  { _id: 't4', name: 'Asian Radhika Multiplex: ECIL', city: 'Hyderabad', address: 'Dr. AS Rao Nagar Road, ECIL, Kapra, Hyderabad' },
+  { _id: 't5', name: 'PVR: Forum Mall, Koramangala', city: 'Bengaluru', address: 'Hosur Road, Koramangala, Bengaluru' },
+  { _id: 't6', name: 'Cinepolis: Orion Mall, Rajajinagar', city: 'Bengaluru', address: 'Brigade Gateway, Malleshwaram, Bengaluru' },
+  { _id: 't7', name: 'PVR: Phoenix Palladium, Lower Parel', city: 'Mumbai', address: 'Senapati Bapat Marg, Lower Parel, Mumbai' },
+  { _id: 't8', name: 'INOX: Megaplex, Malad', city: 'Mumbai', address: 'Inorbit Mall, Malad West, Mumbai' },
+  { _id: 't9', name: 'PVR: Select Citywalk, Saket', city: 'Delhi-NCR', address: 'Saket District Centre, New Delhi' },
+  { _id: 't10', name: 'PVR: Escape, Express Avenue Mall', city: 'Chennai', address: 'Whites Road, Royapettah, Chennai' },
+  { _id: 't11', name: 'Asian Urvasi 70MM: Godavarikhani', city: 'Godavarikhani', address: 'Main Road, Godavarikhani, Telangana' },
+  { _id: 't12', name: 'MGM Multiplex: Warangal', city: 'Warangal', address: 'Hunter Road, Warangal, Telangana' },
+  { _id: 't13', name: 'Cinepolis: CMR Central, Maddilapalem', city: 'Visakhapatnam', address: 'National Highway 16, Visakhapatnam, AP' },
+  { _id: 't14', name: 'PVR: Ripples Mall, MG Road', city: 'Vijayawada', address: 'MG Road, Labbipet, Vijayawada, AP' }
 ];
 
 export const generateFallbackSeats = () => {
@@ -166,8 +294,10 @@ export const generateFallbackSeats = () => {
   return seats;
 };
 
-export const getFallbackShowsForMovie = (movieId) => {
+export const getFallbackShowsForMovie = (movieId, city = 'Hyderabad') => {
   const movie = FALLBACK_MOVIES.find(m => m._id === movieId) || FALLBACK_MOVIES[0];
+  const matchingTheatres = FALLBACK_THEATRES.filter(t => t.city.toLowerCase() === city.toLowerCase());
+  const selectedTheatres = matchingTheatres.length > 0 ? matchingTheatres : FALLBACK_THEATRES.slice(0, 3);
   const now = new Date();
   const shows = [];
 
@@ -175,44 +305,47 @@ export const getFallbackShowsForMovie = (movieId) => {
     const d = new Date(now);
     d.setDate(now.getDate() + dayOffset);
 
-    const m = new Date(d); m.setHours(11, 15, 0, 0);
-    const e = new Date(d); e.setHours(18, 45, 0, 0);
+    const m = new Date(d); m.setHours(10, 45, 0, 0);
+    const mat = new Date(d); mat.setHours(14, 15, 0, 0);
+    const e = new Date(d); e.setHours(18, 30, 0, 0);
     const n = new Date(d); n.setHours(21, 45, 0, 0);
 
-    shows.push({
-      _id: `s_${movie._id}_${dayOffset}_1`,
-      movie,
-      theatre: FALLBACK_THEATRES[0],
-      screenNumber: 1,
-      format: 'IMAX 2D',
-      language: movie.language.split('/')[0].trim(),
-      showDateTime: m.toISOString(),
-      ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
-      seats: generateFallbackSeats()
-    });
+    selectedTheatres.forEach((theatre, tIdx) => {
+      shows.push({
+        _id: `s_${movie._id}_${dayOffset}_${tIdx}_1`,
+        movie,
+        theatre,
+        screenNumber: 1,
+        format: tIdx === 0 ? 'IMAX 2D' : '2D',
+        language: movie.language.split('/')[0].trim(),
+        showDateTime: m.toISOString(),
+        ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
+        seats: generateFallbackSeats()
+      });
 
-    shows.push({
-      _id: `s_${movie._id}_${dayOffset}_2`,
-      movie,
-      theatre: FALLBACK_THEATRES[1],
-      screenNumber: 1,
-      format: '2D',
-      language: movie.language.split('/')[0].trim(),
-      showDateTime: e.toISOString(),
-      ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
-      seats: generateFallbackSeats()
-    });
+      shows.push({
+        _id: `s_${movie._id}_${dayOffset}_${tIdx}_2`,
+        movie,
+        theatre,
+        screenNumber: 1,
+        format: '2D',
+        language: movie.language.split('/')[0].trim(),
+        showDateTime: e.toISOString(),
+        ticketPrice: { classic: 175, standard: 250, premium: 350, recliner: 450 },
+        seats: generateFallbackSeats()
+      });
 
-    shows.push({
-      _id: `s_${movie._id}_${dayOffset}_3`,
-      movie,
-      theatre: FALLBACK_THEATRES[2],
-      screenNumber: 2,
-      format: 'Laser 4K',
-      language: movie.language.split('/')[0].trim(),
-      showDateTime: n.toISOString(),
-      ticketPrice: { classic: 160, standard: 220, premium: 320, recliner: 420 },
-      seats: generateFallbackSeats()
+      shows.push({
+        _id: `s_${movie._id}_${dayOffset}_${tIdx}_3`,
+        movie,
+        theatre,
+        screenNumber: 2,
+        format: 'Laser 4K',
+        language: movie.language.split('/')[0].trim(),
+        showDateTime: n.toISOString(),
+        ticketPrice: { classic: 160, standard: 220, premium: 320, recliner: 420 },
+        seats: generateFallbackSeats()
+      });
     });
   });
 

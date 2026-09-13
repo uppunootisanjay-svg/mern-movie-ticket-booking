@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { SNACKS_MENU } from '../data/fallbackData';
 import { ShieldCheck, Ticket, CreditCard, Smartphone, CheckCircle, Plus, Minus, Popcorn, QrCode } from 'lucide-react';
-
-const SNACKS_MENU = [
-  { id: 'p1', name: 'Jumbo Butter Popcorn', price: 190, desc: 'Fresh warm salted butter popcorn' },
-  { id: 'p2', name: 'Caramel Popcorn Tub', price: 230, desc: 'Crispy sweet glazed gourmet caramel' },
-  { id: 'p3', name: 'Nachos with Warm Cheese Dip', price: 160, desc: 'Crunchy tortilla chips with melted cheese' },
-  { id: 'p4', name: 'Chilled Coca-Cola (500ml)', price: 90, desc: 'Ice cold carbonated soft drink' },
-  { id: 'p5', name: 'Blockbuster Combo (Popcorn + 2 Coke)', price: 340, desc: '1 Large Popcorn + 2 Large 500ml Drinks' }
-];
 
 const BookingSummaryPage = () => {
   const location = useLocation();
@@ -95,7 +88,6 @@ const BookingSummaryPage = () => {
         });
       } catch (backendErr) {
         console.warn('Backend unavailable, issuing verified client ticket:', backendErr.message);
-        // Fallback e-ticket generator ensures smooth user checkout experience
         const randNum = Math.floor(100000 + Math.random() * 900000);
         booking = {
           bookingCode: `BMS-HYD-${randNum}`,
@@ -168,35 +160,60 @@ const BookingSummaryPage = () => {
           </div>
         </div>
 
-        {/* Grab a Bite / Snacks Section */}
+        {/* Grab a Bite / Snacks Section with Food Posters */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '1rem', padding: '2rem' }}>
           <h2 style={{ fontSize: '1.35rem', fontWeight: '800', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Popcorn size={22} color="#f59e0b" /> Grab a Bite! (Popcorn & Drinks)
+            <Popcorn size={22} color="#f59e0b" /> Grab a Bite! (Food, Popcorn & Combos)
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
-            Collect hot & fresh at the cinema counter with your ticket
+            Collect warm & fresh at the cinema counter with your ticket barcode
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.25rem' }}>
             {SNACKS_MENU.map(snack => {
               const qty = snacksCart[snack.id] || 0;
               return (
-                <div key={snack.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: '0.5rem' }}>
-                  <div>
-                    <strong style={{ display: 'block', fontSize: '0.95rem' }}>{snack.name}</strong>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{snack.desc} • ₹{snack.price}</span>
-                  </div>
+                <div key={snack.id} style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '0.75rem',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'border-color 0.2s'
+                }}>
+                  {/* Food Poster Image */}
+                  <img
+                    src={snack.posterUrl}
+                    alt={snack.name}
+                    style={{ width: '100%', height: '140px', objectFit: 'cover' }}
+                  />
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    {qty > 0 && (
-                      <button onClick={() => handleSnackQty(snack.id, -1)} className="btn btn-outline" style={{ padding: '0.3rem 0.6rem' }}>
-                        <Minus size={14} />
-                      </button>
-                    )}
-                    {qty > 0 && <span style={{ fontWeight: '800', minWidth: '18px', textAlign: 'center' }}>{qty}</span>}
-                    <button onClick={() => handleSnackQty(snack.id, 1)} className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}>
-                      <Plus size={14} />
-                    </button>
+                  <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px', marginBottom: '0.4rem' }}>
+                      <strong style={{ fontSize: '0.95rem' }}>{snack.name}</strong>
+                      <span className="badge" style={{ fontSize: '0.75rem' }}>{snack.category}</span>
+                    </div>
+
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', lineHeight: '1.4', marginBottom: '1rem', flexGrow: 1 }}>
+                      {snack.desc}
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
+                      <span style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--accent)' }}>₹{snack.price}</span>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {qty > 0 && (
+                          <button onClick={() => handleSnackQty(snack.id, -1)} className="btn btn-outline" style={{ padding: '0.25rem 0.5rem' }}>
+                            <Minus size={13} />
+                          </button>
+                        )}
+                        {qty > 0 && <span style={{ fontWeight: '800', minWidth: '18px', textAlign: 'center' }}>{qty}</span>}
+                        <button onClick={() => handleSnackQty(snack.id, 1)} className="btn btn-primary" style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem' }}>
+                          {qty === 0 ? '+ Add' : <Plus size={13} />}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

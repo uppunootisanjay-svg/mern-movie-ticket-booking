@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 import MovieCard from '../components/MovieCard';
-import { FALLBACK_MOVIES } from '../data/fallbackData';
+import { FALLBACK_MOVIES, ALL_CITIES } from '../data/fallbackData';
 import { Search, MapPin, Sparkles } from 'lucide-react';
 
 const HomePage = () => {
-  // Preload with high-fidelity BookMyShow movies so the UI renders instantly
   const [movies, setMovies] = useState(FALLBACK_MOVIES);
-  const [cities, setCities] = useState(['Hyderabad', 'Bengaluru', 'Mumbai']);
+  const [cities, setCities] = useState(ALL_CITIES);
   const [selectedCity, setSelectedCity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -20,11 +19,11 @@ const HomePage = () => {
         }
         const citiesData = await apiClient('/theatres/cities');
         if (Array.isArray(citiesData) && citiesData.length > 0) {
-          setCities(citiesData);
+          const mergedCities = Array.from(new Set([...ALL_CITIES, ...citiesData]));
+          setCities(mergedCities);
         }
       } catch (err) {
-        // Backend sleeping or offline, UI already renders authentic cinema data seamlessly
-        console.log('Running in client-optimized mode with real cinema data.');
+        console.log('Running in client-optimized mode with full cities and cinema data.');
       }
     };
 
@@ -33,8 +32,13 @@ const HomePage = () => {
 
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      movie.genre?.some(g => g.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesSearch;
+      movie.genre?.some(g => g.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      movie.language?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCity = !selectedCity || selectedCity === 'All Cities' ||
+      !movie.cities || movie.cities.some(c => c.toLowerCase() === selectedCity.toLowerCase());
+
+    return matchesSearch && matchesCity;
   });
 
   return (
@@ -45,7 +49,7 @@ const HomePage = () => {
             <Sparkles size={16} /> Instant Cinema Booking Platform
           </div>
           <h1>Experience Movies Like Never Before</h1>
-          <p>Explore the latest blockbuster releases, select your preferred cinema halls, and reserve seats in real time.</p>
+          <p>Explore the latest blockbuster releases across all major cities, select your preferred multiplex, and reserve seats in real time.</p>
         </div>
       </section>
 
@@ -55,7 +59,7 @@ const HomePage = () => {
             <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
-              placeholder="Search movies by title or genre..."
+              placeholder="Search movies by title, genre, or language (Telugu, Hindi, English)..."
               className="filter-input"
               style={{ paddingLeft: '2.5rem', width: '100%' }}
               value={searchQuery}
@@ -63,15 +67,14 @@ const HomePage = () => {
             />
           </div>
 
-          <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
-            <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
+            <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }} />
             <select
               className="filter-select"
-              style={{ paddingLeft: '2.5rem', width: '100%' }}
+              style={{ paddingLeft: '2.5rem', width: '100%', fontWeight: '600' }}
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
             >
-              <option value="">All Cities</option>
               {cities.map(city => (
                 <option key={city} value={city}>{city}</option>
               ))}
@@ -81,8 +84,8 @@ const HomePage = () => {
 
         {filteredMovies.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-            <h3>No movies found</h3>
-            <p style={{ marginTop: '0.5rem' }}>Try searching with a different keyword.</p>
+            <h3>No movies found in {selectedCity || 'this category'}</h3>
+            <p style={{ marginTop: '0.5rem' }}>Try selecting "All Cities" or searching with a different title.</p>
           </div>
         ) : (
           <div className="movie-grid">
