@@ -2,20 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 import MovieCard from '../components/MovieCard';
 import { FALLBACK_MOVIES, ALL_CITIES } from '../data/fallbackData';
-import { Search, MapPin, Sparkles } from 'lucide-react';
+import { Search, MapPin, Sparkles, Film } from 'lucide-react';
+
+const mergeMovies = (backendMovies, catalogMovies) => {
+  if (!Array.isArray(backendMovies) || backendMovies.length === 0) return catalogMovies;
+  const map = new Map();
+  catalogMovies.forEach(m => map.set(m.title.toLowerCase().trim(), m));
+  backendMovies.forEach(m => {
+    const key = m.title.toLowerCase().trim();
+    if (map.has(key)) {
+      map.set(key, { ...map.get(key), ...m });
+    } else {
+      map.set(key, m);
+    }
+  });
+  return Array.from(map.values());
+};
 
 const HomePage = () => {
   const [movies, setMovies] = useState(FALLBACK_MOVIES);
   const [cities, setCities] = useState(ALL_CITIES);
   const [selectedCity, setSelectedCity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLang, setSelectedLang] = useState('All');
 
   useEffect(() => {
     const syncBackend = async () => {
       try {
         const moviesData = await apiClient('/movies');
         if (Array.isArray(moviesData) && moviesData.length > 0) {
-          setMovies(moviesData);
+          // Merge to retain all catalog movies across all languages & genres
+          setMovies(mergeMovies(moviesData, FALLBACK_MOVIES));
         }
         const citiesData = await apiClient('/theatres/cities');
         if (Array.isArray(citiesData) && citiesData.length > 0) {
@@ -38,7 +55,10 @@ const HomePage = () => {
     const matchesCity = !selectedCity || selectedCity === 'All Cities' ||
       !movie.cities || movie.cities.some(c => c.toLowerCase() === selectedCity.toLowerCase());
 
-    return matchesSearch && matchesCity;
+    const matchesLang = selectedLang === 'All' ||
+      movie.language?.toLowerCase().includes(selectedLang.toLowerCase());
+
+    return matchesSearch && matchesCity && matchesLang;
   });
 
   return (
@@ -53,13 +73,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      <main className="container">
+      <main className="container" id="movies-section">
         <div className="filter-bar">
           <div style={{ position: 'relative', flex: 2, minWidth: '240px' }}>
             <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
-              placeholder="Search movies by title, genre, or language (Telugu, Hindi, English)..."
+              placeholder="Search movies by title, genre, or language..."
               className="filter-input"
               style={{ paddingLeft: '2.5rem', width: '100%' }}
               value={searchQuery}
@@ -67,7 +87,7 @@ const HomePage = () => {
             />
           </div>
 
-          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
             <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--primary)' }} />
             <select
               className="filter-select"
@@ -82,10 +102,30 @@ const HomePage = () => {
           </div>
         </div>
 
+        {/* Quick Language Filter Bar */}
+        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.75rem', marginBottom: '2rem' }}>
+          {['All', 'Telugu', 'Hindi', 'English', 'Tamil', 'Malayalam', 'Kannada', 'Punjabi', 'Marathi', 'Gujarati'].map(lang => (
+            <button
+              key={lang}
+              onClick={() => setSelectedLang(lang)}
+              className={`btn ${selectedLang === lang ? 'btn-primary' : 'btn-outline'}`}
+              style={{ padding: '0.35rem 0.9rem', fontSize: '0.8rem', borderRadius: '2rem', whiteSpace: 'nowrap' }}
+            >
+              {lang}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Film size={22} className="brand-red" /> Running Movies ({filteredMovies.length})
+          </h2>
+        </div>
+
         {filteredMovies.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-            <h3>No movies found in {selectedCity || 'this category'}</h3>
-            <p style={{ marginTop: '0.5rem' }}>Try selecting "All Cities" or searching with a different title.</p>
+            <h3>No movies found</h3>
+            <p style={{ marginTop: '0.5rem' }}>Try selecting "All" or searching with a different title.</p>
           </div>
         ) : (
           <div className="movie-grid">

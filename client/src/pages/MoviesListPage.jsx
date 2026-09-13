@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 import MovieCard from '../components/MovieCard';
 import { FALLBACK_MOVIES, ALL_CITIES } from '../data/fallbackData';
-import { Search, MapPin, Film, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Search, MapPin, Film, Sparkles } from 'lucide-react';
 
 const LANGUAGES = [
   'All',
@@ -40,6 +40,21 @@ const GENRES = [
   'Thriller'
 ];
 
+const mergeMovies = (backendMovies, catalogMovies) => {
+  if (!Array.isArray(backendMovies) || backendMovies.length === 0) return catalogMovies;
+  const map = new Map();
+  catalogMovies.forEach(m => map.set(m.title.toLowerCase().trim(), m));
+  backendMovies.forEach(m => {
+    const key = m.title.toLowerCase().trim();
+    if (map.has(key)) {
+      map.set(key, { ...map.get(key), ...m });
+    } else {
+      map.set(key, m);
+    }
+  });
+  return Array.from(map.values());
+};
+
 const MoviesListPage = () => {
   const [movies, setMovies] = useState(FALLBACK_MOVIES);
   const [selectedLanguage, setSelectedLanguage] = useState('All');
@@ -52,7 +67,7 @@ const MoviesListPage = () => {
       try {
         const data = await apiClient('/movies');
         if (Array.isArray(data) && data.length > 0) {
-          setMovies(data);
+          setMovies(mergeMovies(data, FALLBACK_MOVIES));
         }
       } catch (err) {
         console.log('Using optimized offline-first movie catalog.');
@@ -83,12 +98,12 @@ const MoviesListPage = () => {
       {/* Page Header */}
       <div style={{ marginBottom: '2.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: '700', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-          <Film size={20} /> ALL MOVIES ACROSS ALL GENRES & LANGUAGES
+          <Film size={20} /> ALL MOVIES DIRECTORY
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h1 style={{ fontSize: '2.25rem', fontWeight: '900', letterSpacing: '-0.02em' }}>
-              All Movies ({filteredMovies.length})
+              All Movies in Theatres ({filteredMovies.length})
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '4px' }}>
               Filter by Telugu, Hindi, English, Tamil, Malayalam, Kannada, Punjabi, Marathi, Gujarati & 18+ Genres
