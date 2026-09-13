@@ -21,7 +21,9 @@ const Navbar = () => {
         </Link>
 
         <nav className="nav-links">
-          <Link to="/" className="nav-link">Movies</Link>
+          <Link to="/movies" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Film size={16} /> Movies
+          </Link>
           {user && (
             <Link to="/my-bookings" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Ticket size={16} /> My Tickets
