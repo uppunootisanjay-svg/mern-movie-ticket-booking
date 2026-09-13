@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { FALLBACK_MOVIES, getFallbackShowsForMovie } from '../data/fallbackData';
-import { Star, Clock, Globe, Calendar, MapPin, Play, X, Sparkles, Popcorn, Smartphone } from 'lucide-react';
+import { Star, Clock, Globe, Calendar, MapPin, Play, X, Sparkles, Popcorn, Smartphone, ExternalLink } from 'lucide-react';
 
 const MovieDetailPage = () => {
   const { id } = useParams();
 
-  // Instant render with real data
-  const defaultMovie = FALLBACK_MOVIES.find(m => m._id === id) || FALLBACK_MOVIES[0];
+  // Match movie from verified master catalog
+  const defaultMovie = FALLBACK_MOVIES.find(m => m._id === id) ||
+    FALLBACK_MOVIES.find(m => m.title.toLowerCase() === id?.toLowerCase()) ||
+    FALLBACK_MOVIES[0];
+
   const [movie, setMovie] = useState(defaultMovie);
   const [shows, setShows] = useState(getFallbackShowsForMovie(id || defaultMovie._id));
   const [showTrailer, setShowTrailer] = useState(false);
@@ -30,7 +33,14 @@ const MovieDetailPage = () => {
     const syncBackendDetails = async () => {
       try {
         const movieData = await apiClient(`/movies/${id}`);
-        if (movieData && movieData.title) setMovie(movieData);
+        if (movieData && movieData.title) {
+          const verified = FALLBACK_MOVIES.find(m => m.title.toLowerCase() === movieData.title.toLowerCase());
+          setMovie({
+            ...movieData,
+            posterUrl: verified?.posterUrl || movieData.posterUrl,
+            trailerUrl: verified?.trailerUrl || movieData.trailerUrl
+          });
+        }
 
         const showsData = await apiClient(`/shows?movieId=${id}`);
         if (Array.isArray(showsData) && showsData.length > 0) setShows(showsData);
@@ -68,6 +78,8 @@ const MovieDetailPage = () => {
     theatreMap[theatreId].shows.push(show);
   });
 
+  const youtubeVideoId = movie.trailerUrl ? movie.trailerUrl.split('/').pop().split('?')[0] : '';
+
   return (
     <div className="container" style={{ padding: '2.5rem 1.5rem 5rem' }}>
       {/* Movie Details Banner */}
@@ -86,26 +98,24 @@ const MovieDetailPage = () => {
           <img
             src={movie.posterUrl}
             alt={movie.title}
-            style={{ width: '100%', borderRadius: '1rem', objectFit: 'cover', height: '440px' }}
+            style={{ width: '100%', borderRadius: '1rem', objectFit: 'cover', height: '440px', display: 'block' }}
           />
           {movie.trailerUrl && (
             <button
               onClick={() => setShowTrailer(true)}
-              className="btn"
+              className="btn btn-primary"
               style={{
                 position: 'absolute',
-                bottom: '1rem',
+                bottom: '1.25rem',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                background: 'rgba(0,0,0,0.85)',
-                color: 'white',
-                border: '1px solid rgba(255,255,255,0.3)',
-                backdropFilter: 'blur(6px)',
-                width: '85%',
-                padding: '0.65rem'
+                width: '88%',
+                padding: '0.75rem',
+                fontWeight: '800',
+                boxShadow: '0 4px 20px rgba(248, 68, 100, 0.6)'
               }}
             >
-              <Play size={16} fill="white" /> Watch Trailer
+              <Play size={18} fill="white" /> Watch Trailer
             </button>
           )}
         </div>
@@ -223,8 +233,8 @@ const MovieDetailPage = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ color: '#10b981', fontWeight: '800', fontSize: '1rem' }}>{timeString}</span>
                           <span style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.1)', padding: '1px 5px', borderRadius: '3px' }}>
-                            {show.format || '2D'}
-                          </span>
+                            {show.format || '2D'
+                          }</span>
                         </div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                           Screen {show.screenNumber} • Laser 4K
@@ -239,11 +249,11 @@ const MovieDetailPage = () => {
         )}
       </div>
 
-      {/* Embedded YouTube Trailer Modal */}
+      {/* Verified YouTube Trailer Modal */}
       {showTrailer && (
         <div className="modal-overlay" onClick={() => setShowTrailer(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 1.5rem', background: 'var(--bg-dark)', borderBottom: '1px solid var(--border)' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '820px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: 'var(--bg-dark)', borderBottom: '1px solid var(--border)' }}>
               <strong style={{ fontSize: '1.1rem' }}>{movie.title} - Official Trailer</strong>
               <button onClick={() => setShowTrailer(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
                 <X size={20} />
@@ -251,12 +261,23 @@ const MovieDetailPage = () => {
             </div>
             <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
               <iframe
-                src={movie.trailerUrl + '?autoplay=1'}
+                src={`${movie.trailerUrl}?autoplay=1&rel=0`}
                 title={movie.title}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
+            </div>
+            <div style={{ padding: '0.75rem 1.5rem', background: 'var(--bg-card)', display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--border)' }}>
+              <a
+                href={`https://www.youtube.com/watch?v=${youtubeVideoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
+              >
+                <ExternalLink size={14} /> Open in YouTube
+              </a>
             </div>
           </div>
         </div>

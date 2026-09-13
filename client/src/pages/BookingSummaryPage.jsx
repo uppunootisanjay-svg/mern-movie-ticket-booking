@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { SNACKS_MENU } from '../data/fallbackData';
-import { ShieldCheck, Ticket, CreditCard, Smartphone, CheckCircle, Plus, Minus, Popcorn, QrCode } from 'lucide-react';
+import { ShieldCheck, Ticket, CreditCard, Smartphone, CheckCircle, Plus, Minus, Popcorn, Tag, Sparkles, X } from 'lucide-react';
+
+const COUPONS = [
+  { code: 'CINEPASS75', label: 'Flat ₹75 Off on Total', discount: 75, minAmount: 300 },
+  { code: 'BMSBOGO', label: 'Buy 1 Get 1 Free (1 Ticket Discount)', type: 'BOGO', minSeats: 2 },
+  { code: 'FOOD20', label: '20% Off on Food & Beverages', type: 'SNACKS_PERCENT', percent: 20 }
+];
 
 const BookingSummaryPage = () => {
   const location = useLocation();
@@ -19,6 +25,11 @@ const BookingSummaryPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState(420); // 7 minutes lock timer
+
+  // Promo Code State
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponMessage, setCouponMessage] = useState(null);
 
   useEffect(() => {
     if (!show || !selectedSeats || selectedSeats.length === 0) {
@@ -56,7 +67,52 @@ const BookingSummaryPage = () => {
 
   const convenienceFee = Number((selectedSeats?.length * 15).toFixed(2));
   const gst = Number((convenienceFee * 0.18).toFixed(2));
-  const grandTotal = totalAmount + snacksTotal + convenienceFee + gst;
+  const subTotal = totalAmount + snacksTotal + convenienceFee + gst;
+
+  // Calculate discount
+  let discountAmount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.code === 'CINEPASS75') {
+      discountAmount = 75;
+    } else if (appliedCoupon.code === 'BMSBOGO') {
+      // 1 ticket price off
+      const oneTicketPrice = Math.round(totalAmount / selectedSeats.length);
+      discountAmount = oneTicketPrice;
+    } else if (appliedCoupon.code === 'FOOD20') {
+      discountAmount = Math.round(snacksTotal * 0.20);
+    }
+  }
+
+  const grandTotal = Math.max(0, subTotal - discountAmount);
+
+  const handleApplyCoupon = (codeToApply) => {
+    const code = (codeToApply || couponInput).trim().toUpperCase();
+    const found = COUPONS.find(c => c.code === code);
+
+    if (!found) {
+      setCouponMessage({ type: 'error', text: 'Invalid promo code. Try CINEPASS75 or BMSBOGO' });
+      return;
+    }
+
+    if (found.minSeats && selectedSeats.length < found.minSeats) {
+      setCouponMessage({ type: 'error', text: `Requires minimum ${found.minSeats} seats` });
+      return;
+    }
+
+    if (found.code === 'FOOD20' && snacksTotal === 0) {
+      setCouponMessage({ type: 'error', text: 'Please add snacks to use this promo code' });
+      return;
+    }
+
+    setAppliedCoupon(found);
+    setCouponMessage({ type: 'success', text: `Coupon ${found.code} applied successfully!` });
+    setCouponInput('');
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponMessage(null);
+  };
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -66,7 +122,6 @@ const BookingSummaryPage = () => {
       setLoading(true);
       setError(null);
 
-      // Package snacks
       const orderedSnacks = Object.entries(snacksCart)
         .filter(([_, qty]) => qty > 0)
         .map(([id, qty]) => {
@@ -182,7 +237,6 @@ const BookingSummaryPage = () => {
                   flexDirection: 'column',
                   transition: 'border-color 0.2s'
                 }}>
-                  {/* Food Poster Image */}
                   <img
                     src={snack.posterUrl}
                     alt={snack.name}
@@ -215,6 +269,60 @@ const BookingSummaryPage = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Promo Codes & Discounts Section */}
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '1rem', padding: '2rem' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: '800', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Tag size={20} className="brand-red" /> Unlock Discounts & Promo Codes
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+            Click an available coupon below or enter your discount code
+          </p>
+
+          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            <input
+              type="text"
+              placeholder="Enter Promo Code (e.g. CINEPASS75)"
+              className="filter-input"
+              style={{ textTransform: 'uppercase', fontWeight: '700' }}
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value)}
+            />
+            <button onClick={() => handleApplyCoupon()} className="btn btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
+              Apply
+            </button>
+          </div>
+
+          {couponMessage && (
+            <div className={`alert ${couponMessage.type === 'success' ? 'alert-info' : 'alert-danger'}`} style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '1rem' }}>
+              {couponMessage.text}
+            </div>
+          )}
+
+          {/* Quick Clickable Coupon Chips */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {COUPONS.map(c => {
+              const isApplied = appliedCoupon?.code === c.code;
+              return (
+                <div key={c.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: isApplied ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.02)', border: isApplied ? '1px solid #10b981' : '1px dashed var(--border)', borderRadius: '0.5rem' }}>
+                  <div>
+                    <span style={{ fontWeight: '800', color: isApplied ? '#10b981' : 'var(--primary)', letterSpacing: '0.05em' }}>{c.code}</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginLeft: '8px' }}>• {c.label}</span>
+                  </div>
+                  {isApplied ? (
+                    <button onClick={handleRemoveCoupon} className="btn btn-outline" style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem', borderColor: '#ef4444', color: '#ef4444' }}>
+                      <X size={12} /> Remove
+                    </button>
+                  ) : (
+                    <button onClick={() => handleApplyCoupon(c.code)} className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
+                      Apply Code
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -312,10 +420,18 @@ const BookingSummaryPage = () => {
               <span>Convenience Fees (₹15/ticket)</span>
               <span>₹{convenienceFee.toFixed(2)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
               <span>Integrated GST (18%)</span>
               <span>₹{gst.toFixed(2)}</span>
             </div>
+
+            {discountAmount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', color: '#10b981', fontWeight: '700', fontSize: '0.95rem' }}>
+                <span>Promo Discount ({appliedCoupon?.code})</span>
+                <span>- ₹{discountAmount.toFixed(2)}</span>
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid var(--border)', fontSize: '1.4rem', fontWeight: '800' }}>
               <span>Amount Payable</span>
               <span style={{ color: 'var(--primary)' }}>₹{grandTotal.toFixed(2)}</span>

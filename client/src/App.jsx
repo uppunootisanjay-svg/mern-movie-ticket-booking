@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import MoviesListPage from './pages/MoviesListPage';
+import TheatresPage from './pages/TheatresPage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import SeatSelectionPage from './pages/SeatSelectionPage';
 import BookingSummaryPage from './pages/BookingSummaryPage';
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/movies" element={<MoviesListPage />} />
+        <Route path="/theatres" element={<TheatresPage />} />
         <Route path="/movie/:id" element={<MovieDetailPage />} />
         <Route path="/shows/:showId/seats" element={<SeatSelectionPage />} />
         <Route path="/booking/summary" element={<BookingSummaryPage />} />

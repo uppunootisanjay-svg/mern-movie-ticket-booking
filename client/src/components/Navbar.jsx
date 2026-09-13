@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Film, User, LogOut, Ticket } from 'lucide-react';
+import { Film, User, LogOut, Ticket, MapPin } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -23,6 +23,9 @@ const Navbar = () => {
         <nav className="nav-links">
           <Link to="/movies" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <Film size={16} /> Movies
+          </Link>
+          <Link to="/theatres" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <MapPin size={16} /> Cinemas
           </Link>
           {user && (
             <Link to="/my-bookings" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
