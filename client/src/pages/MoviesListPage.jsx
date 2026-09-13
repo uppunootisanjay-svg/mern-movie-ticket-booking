@@ -4,8 +4,41 @@ import MovieCard from '../components/MovieCard';
 import { FALLBACK_MOVIES, ALL_CITIES } from '../data/fallbackData';
 import { Search, MapPin, Film, SlidersHorizontal, Sparkles } from 'lucide-react';
 
-const LANGUAGES = ['All', 'Telugu', 'Hindi', 'English', 'Tamil'];
-const GENRES = ['All', 'Action', 'Thriller', 'Drama', 'Comedy', 'Sci-Fi', 'Horror', 'Adventure', 'Mystery'];
+const LANGUAGES = [
+  'All',
+  'Telugu',
+  'Hindi',
+  'English',
+  'Tamil',
+  'Malayalam',
+  'Kannada',
+  'Marathi',
+  'Bengali',
+  'Punjabi',
+  'Gujarati'
+];
+
+const GENRES = [
+  'All',
+  'Action',
+  'Adventure',
+  'Animation',
+  'Biography',
+  'Comedy',
+  'Crime',
+  'Drama',
+  'Family',
+  'Fantasy',
+  'Historical',
+  'Horror',
+  'Mystery',
+  'Mythological',
+  'Romance',
+  'Sci-Fi',
+  'Sports',
+  'Survival',
+  'Thriller'
+];
 
 const MoviesListPage = () => {
   const [movies, setMovies] = useState(FALLBACK_MOVIES);
@@ -50,7 +83,7 @@ const MoviesListPage = () => {
       {/* Page Header */}
       <div style={{ marginBottom: '2.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: '700', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-          <Film size={20} /> NOW SHOWING IN THEATRES
+          <Film size={20} /> ALL MOVIES ACROSS ALL GENRES & LANGUAGES
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
@@ -58,7 +91,7 @@ const MoviesListPage = () => {
               All Movies ({filteredMovies.length})
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '4px' }}>
-              Book online tickets for current blockbuster releases running in cinemas near you
+              Filter by Telugu, Hindi, English, Tamil, Malayalam, Kannada, Punjabi, Marathi, Gujarati & 18+ Genres
             </p>
           </div>
 
@@ -85,7 +118,7 @@ const MoviesListPage = () => {
           <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
-            placeholder="Search by movie title (e.g. Pushpa 2, Devara, Kalki)..."
+            placeholder="Search any title across all languages and genres..."
             className="filter-input"
             style={{ paddingLeft: '2.75rem', width: '100%', fontSize: '0.95rem' }}
             value={searchQuery}
@@ -93,10 +126,10 @@ const MoviesListPage = () => {
           />
         </div>
 
-        {/* Language Filter Chips */}
-        <div style={{ marginBottom: '1rem' }}>
+        {/* All Languages Filter Chips */}
+        <div style={{ marginBottom: '1.25rem' }}>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', display: 'block', marginBottom: '0.5rem' }}>
-            Filter by Language:
+            Filter by Language ({LANGUAGES.length - 1} Languages):
           </span>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {LANGUAGES.map(lang => (
@@ -112,10 +145,10 @@ const MoviesListPage = () => {
           </div>
         </div>
 
-        {/* Genre Filter Chips */}
+        {/* All Genres Filter Chips */}
         <div>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', display: 'block', marginBottom: '0.5rem' }}>
-            Filter by Genre:
+            Filter by Genre ({GENRES.length - 1} Genres):
           </span>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {GENRES.map(genre => (
@@ -136,9 +169,9 @@ const MoviesListPage = () => {
       {filteredMovies.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '4rem 0', background: 'var(--bg-card)', borderRadius: '1rem', border: '1px solid var(--border)' }}>
           <Film size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 1rem' }} />
-          <h3>No movies match your filters</h3>
+          <h3>No movies match the selected filters</h3>
           <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
-            Try resetting your language or genre selections
+            Try choosing a different language or genre combination
           </p>
           <button
             onClick={() => { setSelectedLanguage('All'); setSelectedGenre('All'); setSelectedCity('All Cities'); setSearchQuery(''); }}
