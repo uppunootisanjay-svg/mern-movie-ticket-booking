@@ -114,7 +114,7 @@ export const FALLBACK_MOVIES = [
     language: 'Telugu / Hindi',
     duration: 158,
     releaseDate: '2024-01-12',
-    posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/hanu-man-et00311673-1704954533.jpg',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/b/bb/Hanu_Man_film_Release_poster.jpeg',
     trailerUrl: 'https://www.youtube.com/embed/kfkmnI4FYGU',
     rating: 8.7,
     votes: '280K+',
@@ -164,20 +164,6 @@ export const FALLBACK_MOVIES = [
   },
   {
     _id: 'm11',
-    title: 'Jatt & Juliet 3',
-    description: 'Fateh and Pooja, two police officers from Punjab, travel across the United Kingdom on a chaotic extradition case filled with romance and laughter.',
-    genre: ['Romance', 'Comedy', 'Family'],
-    language: 'Punjabi',
-    duration: 140,
-    releaseDate: '2024-06-27',
-    posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/jatt-and-juliet-3-et00392681-1718712613.jpg',
-    trailerUrl: 'https://www.youtube.com/embed/VlvOgk5BHS4',
-    rating: 8.2,
-    votes: '95K+',
-    cities: ['Chandigarh', 'Delhi-NCR', 'Mumbai']
-  },
-  {
-    _id: 'm12',
     title: 'Inside Out 2',
     description: 'Teenager Riley navigates high school with her familiar emotions, only to be surprised by new headquarters guests including Anxiety, Envy, and Ennui.',
     genre: ['Animation', 'Family', 'Comedy'],
@@ -191,7 +177,7 @@ export const FALLBACK_MOVIES = [
     cities: ['Hyderabad', 'Bengaluru', 'Mumbai', 'Delhi-NCR', 'Chennai', 'Pune']
   },
   {
-    _id: 'm13',
+    _id: 'm12',
     title: 'Chandu Champion',
     description: 'The triumphant true life journey of Murlikant Petkar, India’s first Paralympic gold medalist, rising against relentless adversity across battlefield and track.',
     genre: ['Biography', 'Sports', 'Drama'],
@@ -205,7 +191,7 @@ export const FALLBACK_MOVIES = [
     cities: ['Mumbai', 'Delhi-NCR', 'Hyderabad', 'Bengaluru', 'Chandigarh']
   },
   {
-    _id: 'm14',
+    _id: 'm13',
     title: 'Hi Nanna',
     description: 'A single father and his precocious daughter find their lives forever transformed when a compassionate woman enters their world with secrets of her own.',
     genre: ['Romance', 'Family', 'Drama'],
@@ -219,7 +205,7 @@ export const FALLBACK_MOVIES = [
     cities: ['Hyderabad', 'Visakhapatnam', 'Bengaluru', 'Vijayawada', 'Warangal']
   },
   {
-    _id: 'm15',
+    _id: 'm14',
     title: 'Bethlehem Kudumba Unit',
     description: 'A heartwarming social family comedy set in rural Kerala exploring church politics, eccentric parish rivalries, and romantic misunderstandings.',
     genre: ['Comedy', 'Family', 'Drama'],
