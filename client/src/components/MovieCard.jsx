@@ -51,8 +51,10 @@ const MovieCard = ({ movie }) => {
             alt={movie.title}
             className="movie-poster"
             loading="lazy"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             onError={() => {
-              // Fallback to high quality cinema graphic if link fails
+              // Fallback to high-resolution cinema backdrop if external link fails
               setImgSrc('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800');
             }}
           />
@@ -174,7 +176,7 @@ const MovieCard = ({ movie }) => {
                   className="btn btn-outline"
                   style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem', display: 'flex', alignItems: 'center', gap: '5px' }}
                 >
-                  <ExternalLink size={14} /> Open in YouTube
+                  <ExternalLink size={14} /> Open on YouTube
                 </a>
                 <Link
                   to={`/movie/${movie._id}`}
