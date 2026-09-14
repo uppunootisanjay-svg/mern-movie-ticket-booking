@@ -1,5 +1,5 @@
 // Verified BookMyShow India Master Cinema Catalog
-// Permanent, 100% Reliable Official Wikimedia / CDN Poster URLs and Working YouTube Trailers
+// Permanent, 100% Reliable Official Poster URLs and Working YouTube Trailers
 
 export const ALL_CITIES = [
   'All Cities',
@@ -44,7 +44,7 @@ export const FALLBACK_MOVIES = [
     language: 'Telugu / Hindi',
     duration: 177,
     releaseDate: '2024-09-27',
-    posterUrl: 'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/devara--part-1-et00310216-1718873426.jpg',
+    posterUrl: 'https://image.tmdb.org/t/p/w780/lQfuaXjANoTsdx5iS0gCXlK9D2L.jpg',
     trailerUrl: 'https://www.youtube.com/embed/NcCYq3bvlJM',
     rating: 8.4,
     votes: '330K+',
@@ -142,7 +142,7 @@ export const FALLBACK_MOVIES = [
     language: 'Malayalam',
     duration: 158,
     releaseDate: '2024-04-11',
-    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Aavesham.jpg',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d1/Aavesham.jpg',
     trailerUrl: 'https://www.youtube.com/embed/OsMqr3556F8',
     rating: 8.6,
     votes: '190K+',
@@ -198,7 +198,7 @@ export const FALLBACK_MOVIES = [
     language: 'Telugu / Hindi',
     duration: 155,
     releaseDate: '2023-12-07',
-    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/9/97/Hi_Nanna_poster.jpg',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d7/Hi_Nanna_poster.jpg',
     trailerUrl: 'https://www.youtube.com/embed/bI462cIecE0',
     rating: 8.8,
     votes: '280K+',
