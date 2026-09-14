@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Play, X, ExternalLink } from 'lucide-react';
 
+// Generates a unique, branded cinema card if an external CDN image is ever blocked
+const generateUniquePoster = (title, genre) => {
+  const safeTitle = encodeURIComponent(title || 'Movie');
+  const safeGenre = encodeURIComponent(genre || 'Cinema Release');
+  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231a233a"/><stop offset="100%" stop-color="%230b0f19"/></linearGradient></defs><rect width="400" height="600" fill="url(%23g)"/><circle cx="200" cy="220" r="65" fill="%23f84464" opacity="0.2"/><text x="200" y="235" font-family="Arial,sans-serif" font-size="44" fill="%23f84464" text-anchor="middle">🎬</text><text x="200" y="340" font-family="Arial,sans-serif" font-weight="bold" font-size="22" fill="%23ffffff" text-anchor="middle">${safeTitle}</text><text x="200" y="380" font-family="Arial,sans-serif" font-size="14" fill="%23f84464" text-anchor="middle">${safeGenre}</text><text x="200" y="420" font-family="Arial,sans-serif" font-size="12" fill="%239ca3af" text-anchor="middle">CinePass Exclusive</text></svg>`;
+};
+
 const MovieCard = ({ movie }) => {
   const [showModal, setShowModal] = useState(false);
   const [imgSrc, setImgSrc] = useState(movie.posterUrl);
@@ -54,8 +61,8 @@ const MovieCard = ({ movie }) => {
             referrerPolicy="no-referrer"
             crossOrigin="anonymous"
             onError={() => {
-              // Fallback to high-resolution cinema backdrop if external link fails
-              setImgSrc('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800');
+              // Sets a custom, unique poster with that movie's exact title and genre
+              setImgSrc(generateUniquePoster(movie.title, movie.genre?.[0]));
             }}
           />
 
@@ -176,7 +183,7 @@ const MovieCard = ({ movie }) => {
                   className="btn btn-outline"
                   style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem', display: 'flex', alignItems: 'center', gap: '5px' }}
                 >
-                  <ExternalLink size={14} /> Open on YouTube
+                  <ExternalLink size={14} /> Open in YouTube
                 </a>
                 <Link
                   to={`/movie/${movie._id}`}

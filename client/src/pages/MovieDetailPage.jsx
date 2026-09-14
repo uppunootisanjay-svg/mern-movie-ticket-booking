@@ -7,7 +7,6 @@ import { Star, Clock, Globe, Calendar, MapPin, Play, X, Sparkles, Popcorn, Smart
 const MovieDetailPage = () => {
   const { id } = useParams();
 
-  // Match movie from verified master catalog
   const defaultMovie = FALLBACK_MOVIES.find(m => m._id === id) ||
     FALLBACK_MOVIES.find(m => m.title.toLowerCase() === id?.toLowerCase()) ||
     FALLBACK_MOVIES[0];
@@ -17,7 +16,6 @@ const MovieDetailPage = () => {
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
 
-  // Generate 4 calendar days starting from today
   const dates = [0, 1, 2, 3].map(offset => {
     const d = new Date();
     d.setDate(d.getDate() + offset);
@@ -56,7 +54,6 @@ const MovieDetailPage = () => {
     return <div className="container" style={{ padding: '4rem 0' }}><div className="alert alert-danger">Movie not found</div></div>;
   }
 
-  // Filter shows by selected date
   const targetDateStr = dates[selectedDateIdx].fullDate;
   const filteredShows = shows.filter(show => {
     const showDateStr = new Date(show.showDateTime).toISOString().split('T')[0];
@@ -65,7 +62,6 @@ const MovieDetailPage = () => {
 
   const activeShows = filteredShows.length > 0 ? filteredShows : shows.slice(0, 4);
 
-  // Group shows by Theatre
   const theatreMap = {};
   activeShows.forEach(show => {
     const theatreId = show.theatre?._id || 'unknown';
@@ -99,6 +95,8 @@ const MovieDetailPage = () => {
             src={movie.posterUrl}
             alt={movie.title}
             style={{ width: '100%', borderRadius: '1rem', objectFit: 'cover', height: '440px', display: 'block' }}
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
           />
           {movie.trailerUrl && (
             <button
@@ -233,8 +231,8 @@ const MovieDetailPage = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ color: '#10b981', fontWeight: '800', fontSize: '1rem' }}>{timeString}</span>
                           <span style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.1)', padding: '1px 5px', borderRadius: '3px' }}>
-                            {show.format || '2D'
-                          }</span>
+                            {show.format || '2D'}
+                          </span>
                         </div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                           Screen {show.screenNumber} • Laser 4K
